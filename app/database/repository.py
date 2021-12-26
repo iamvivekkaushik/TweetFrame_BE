@@ -41,9 +41,7 @@ class BaseRepository:
 
     def get(self, object_id: int) -> ModelType:
         """Returns a single model object using its ID."""
-        query: Query = self.session.query(self.model).filter(
-            self.model.id == object_id
-        )
+        query: Query = self.session.query(self.model).filter(self.model.id == object_id)
         return query.one()
 
     def create(self, object_in: TweetFrameBase):

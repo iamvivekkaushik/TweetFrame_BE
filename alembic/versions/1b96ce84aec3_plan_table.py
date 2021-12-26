@@ -1,8 +1,8 @@
 """Plan table
 
-Revision ID: f39ee9e6e355
-Revises: ee2fd473d550
-Create Date: 2021-12-25 22:07:14.570550
+Revision ID: 1b96ce84aec3
+Revises: 3bd27789ad83
+Create Date: 2021-12-26 18:46:00.380898
 
 """
 from alembic import op
@@ -14,8 +14,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = 'f39ee9e6e355'
-down_revision = 'ee2fd473d550'
+revision = '1b96ce84aec3'
+down_revision = '3bd27789ad83'
 branch_labels = None
 depends_on = None
 

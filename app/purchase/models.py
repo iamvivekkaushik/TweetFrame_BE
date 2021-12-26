@@ -5,8 +5,7 @@ from sqlalchemy import Column, Text, Date, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.database.core import Base
-from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, \
-    DateTimeModelMixin
+from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelMixin
 
 
 # SQLAlchemy Model
@@ -21,7 +20,7 @@ class Purchase(BaseIdMixin, Base):
     end_time = Column(Text(), nullable=True)
 
     # Relationships
-    user_id = Column(GUID, ForeignKey("user.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
     created_by = relationship("User", back_populates="purchases")
 
     plan_id = Column(Integer, ForeignKey("plan.id"))

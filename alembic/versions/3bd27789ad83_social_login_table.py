@@ -1,8 +1,8 @@
-"""SocialLogin table
+"""Social Login table
 
-Revision ID: ee2fd473d550
-Revises: 86f6aa2bfb18
-Create Date: 2021-12-25 22:05:51.168528
+Revision ID: 3bd27789ad83
+Revises: 6460051a1c53
+Create Date: 2021-12-26 18:45:43.206231
 
 """
 from alembic import op
@@ -14,8 +14,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = 'ee2fd473d550'
-down_revision = '86f6aa2bfb18'
+revision = '3bd27789ad83'
+down_revision = '6460051a1c53'
 branch_labels = None
 depends_on = None
 
@@ -32,9 +32,10 @@ def upgrade():
     sa.Column('request_verifier', sa.Text(), nullable=True),
     sa.Column('access_token', sa.Text(), nullable=True),
     sa.Column('access_secret', sa.Text(), nullable=True),
-    sa.Column('user_id', fastapi_users_db_sqlalchemy.GUID(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_social_login_user_id_user')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_social_login'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_social_login')),
+    sa.UniqueConstraint('request_token', name=op.f('uq_social_login_request_token'))
     )
     op.create_index(op.f('ix_social_login_id'), 'social_login', ['id'], unique=False)
     op.create_index(op.f('ix_social_login_is_active'), 'social_login', ['is_active'], unique=False)

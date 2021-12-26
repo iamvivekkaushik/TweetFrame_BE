@@ -1,8 +1,8 @@
 """Schedule table
 
-Revision ID: 2290abbc6874
-Revises: 81c2f91dccdd
-Create Date: 2021-12-25 22:15:15.579628
+Revision ID: 0bdf27f5d4fa
+Revises: 4daa1c6555e0
+Create Date: 2021-12-26 18:47:09.956319
 
 """
 from alembic import op
@@ -14,8 +14,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '2290abbc6874'
-down_revision = '81c2f91dccdd'
+revision = '0bdf27f5d4fa'
+down_revision = '4daa1c6555e0'
 branch_labels = None
 depends_on = None
 
@@ -37,7 +37,7 @@ def upgrade():
     sa.Column('end_date', sa.Date(), nullable=True),
     sa.Column('start_time', sa.Text(), nullable=True),
     sa.Column('end_time', sa.Text(), nullable=True),
-    sa.Column('user_id', fastapi_users_db_sqlalchemy.GUID(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('frame_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['frame_id'], ['frame.id'], name=op.f('fk_schedule_frame_id_frame')),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_schedule_user_id_user')),

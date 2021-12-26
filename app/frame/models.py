@@ -1,14 +1,12 @@
 from typing import Optional
 
-from fastapi_users_db_sqlalchemy import GUID
-from sqlalchemy import Column, Text, Boolean, ForeignKey
+from sqlalchemy import Column, Text, Boolean, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import URLType, JSONType
 
 from app.database.core import Base
 from app.enums import FrameType, ScheduleType
-from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, \
-    DateTimeModelMixin
+from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelMixin
 
 
 # SQLAlchemy Model
@@ -16,13 +14,12 @@ class Frame(BaseIdMixin, Base):
     name = Column(Text(), nullable=False)
     url = Column(URLType(), nullable=False)
     type = Column(Text(), default=FrameType.FREE, nullable=False)
-    schedule_type = Column(Text(), default=ScheduleType.ONE_TIME,
-                           nullable=False)
+    schedule_type = Column(Text(), default=ScheduleType.ONE_TIME, nullable=False)
     settings = Column(JSONType(), nullable=False, default={})
     is_public = Column(Boolean, default=False, nullable=False)
 
     # Relationships
-    user_id = Column(GUID, ForeignKey("user.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
     created_by = relationship("User", back_populates="frames")
 
     schedules = relationship("Schedule", back_populates="frame")

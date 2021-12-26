@@ -1,32 +1,19 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
-from app.database.core import get_db
+
 import app.social_login.service as social_service
-from app.social_login.models import RequestTokenCreate, AccessTokenGenerate, \
-    SocialLoginResponse
-from app.social_login.repository import SocialLoginRepository
+from app.database.core import get_db
+from app.social_login.models import (
+    RequestTokenCreate,
+    AccessTokenGenerate,
+    SocialLoginResponse,
+)
+from app.user.models import UserCreateResponse
+from sqlalchemy.exc import NoResultFound
 
 social_router = APIRouter(
     tags=["social_login"],
 )
-
-
-@social_router.get("", response_model=SocialLoginResponse,
-                   status_code=status.HTTP_200_OK)
-def get_social_tokens(db: Session = Depends(get_db)):
-    """
-    Get the social tokens
-    """
-    social_login_repo = SocialLoginRepository(session=db)
-    social_login = social_login_repo.get(1)
-
-    if social_login is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Either token or verifier is invalid/expired.",
-        )
-
-    return social_login
 
 
 @social_router.get(
@@ -50,26 +37,43 @@ def generate_twitter_request_url(db: Session = Depends(get_db)):
     auth_url = "https://api.twitter.com/oauth/authorize?oauth_token={}".format(
         request_token
     )
-    response = RequestTokenCreate(request_token=request_token,
-                                  auth_url=auth_url)
+    response = RequestTokenCreate(request_token=request_token, auth_url=auth_url)
     return response
 
 
-@social_router.post("/twitter/verify", response_model=SocialLoginResponse,
-                    status_code=status.HTTP_201_CREATED)
-def verify_twitter_token(body: AccessTokenGenerate, db: Session = Depends(get_db)):
+@social_router.post(
+    "/twitter/verify",
+    response_model=SocialLoginResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def verify_twitter_token(
+    body: AccessTokenGenerate, db: Session = Depends(get_db)
+):
     """
     Verify the oauth token and verifier
     """
     # get the request secret from database for the given request token
-    response = social_service.verify_token(db, body)
+    social_login = social_service.verify_token(db, body)
 
-    if response is None:
+    if social_login is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Either token or verifier is invalid/expired.",
+            detail="Token/Verifier is invalid or expired.",
         )
 
-    # Save api key
-    # generate login token
-    return response
+    # generate login session token
+    # social_login_token = social_service.login_signup_user(db, social_login)
+
+    return social_login
+
+
+@social_router.get("/twitter/signup", status_code=status.HTTP_201_CREATED)
+async def temp_signup(db: Session = Depends(get_db)):
+    try:
+        user = await social_service.generate_jwt_token(db)
+        return user
+    except NoResultFound:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Unable to signup user",
+        )

@@ -1,8 +1,8 @@
 """Purchase table
 
-Revision ID: 43a8368b5e49
-Revises: f39ee9e6e355
-Create Date: 2021-12-25 22:11:04.944231
+Revision ID: 158bb1a08531
+Revises: 1b96ce84aec3
+Create Date: 2021-12-26 18:46:18.491933
 
 """
 from alembic import op
@@ -14,8 +14,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '43a8368b5e49'
-down_revision = 'f39ee9e6e355'
+revision = '158bb1a08531'
+down_revision = '1b96ce84aec3'
 branch_labels = None
 depends_on = None
 
@@ -35,7 +35,7 @@ def upgrade():
     sa.Column('end_date', sa.Date(), nullable=True),
     sa.Column('start_time', sa.Text(), nullable=True),
     sa.Column('end_time', sa.Text(), nullable=True),
-    sa.Column('user_id', fastapi_users_db_sqlalchemy.GUID(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('plan_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['plan_id'], ['plan.id'], name=op.f('fk_purchase_plan_id_plan')),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_purchase_user_id_user')),

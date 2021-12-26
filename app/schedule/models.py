@@ -1,8 +1,6 @@
 from datetime import date
-from enum import Enum
 from typing import Optional
 
-from fastapi_users_db_sqlalchemy import GUID
 from pydantic import Field
 from sqlalchemy import Column, Text, Date, Integer, ForeignKey
 from sqlalchemy.orm import relationship
@@ -10,16 +8,14 @@ from sqlalchemy_utils import JSONType
 
 from app.database.core import Base
 from app.enums import FrameType, ScheduleType, ScheduleStatus
-from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, \
-    DateTimeModelMixin
+from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelMixin
 
 
 # SQLAlchemy Model
 class Schedule(BaseIdMixin, Base):
     name = Column(Text(), nullable=False)
     type = Column(Text(), default=FrameType.FREE, nullable=False)
-    schedule_type = Column(Text(), default=ScheduleType.ONE_TIME,
-                           nullable=False)
+    schedule_type = Column(Text(), default=ScheduleType.ONE_TIME, nullable=False)
     status = Column(Text(), default=ScheduleStatus.CREATED, nullable=False)
     settings = Column(JSONType(), nullable=False, default={})
     message = Column(Text(), nullable=True, default="")
@@ -29,7 +25,7 @@ class Schedule(BaseIdMixin, Base):
     end_time = Column(Text(), default=0, nullable=True)
 
     # Relationships
-    user_id = Column(GUID, ForeignKey("user.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
     created_by = relationship("User", back_populates="schedules")
 
     frame_id = Column(Integer, ForeignKey("frame.id"))
