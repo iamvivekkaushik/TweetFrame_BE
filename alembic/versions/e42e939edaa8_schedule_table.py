@@ -1,8 +1,8 @@
-"""Schedule table
+"""Schedule Table
 
-Revision ID: 0bdf27f5d4fa
-Revises: 4daa1c6555e0
-Create Date: 2021-12-26 18:47:09.956319
+Revision ID: e42e939edaa8
+Revises: 7070844f842a
+Create Date: 2021-12-28 22:32:34.392878
 
 """
 from alembic import op
@@ -14,8 +14,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '0bdf27f5d4fa'
-down_revision = '4daa1c6555e0'
+revision = 'e42e939edaa8'
+down_revision = '7070844f842a'
 branch_labels = None
 depends_on = None
 
@@ -27,16 +27,16 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('name', sa.Text(), nullable=False),
-    sa.Column('type', sa.Text(), nullable=False),
-    sa.Column('schedule_type', sa.Text(), nullable=False),
-    sa.Column('status', sa.Text(), nullable=False),
+    sa.Column('name', sa.String(length=320), nullable=False),
+    sa.Column('type', sa.String(length=20), nullable=False),
+    sa.Column('schedule_type', sa.String(length=20), nullable=False),
+    sa.Column('status', sa.String(length=20), nullable=False),
     sa.Column('settings', sqlalchemy_utils.types.json.JSONType(), nullable=False),
     sa.Column('message', sa.Text(), nullable=True),
     sa.Column('start_date', sa.Date(), nullable=True),
     sa.Column('end_date', sa.Date(), nullable=True),
-    sa.Column('start_time', sa.Text(), nullable=True),
-    sa.Column('end_time', sa.Text(), nullable=True),
+    sa.Column('start_time', sa.String(length=20), nullable=True),
+    sa.Column('end_time', sa.String(length=20), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('frame_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['frame_id'], ['frame.id'], name=op.f('fk_schedule_frame_id_frame')),

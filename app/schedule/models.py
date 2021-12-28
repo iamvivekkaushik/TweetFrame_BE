@@ -2,7 +2,7 @@ from datetime import date
 from typing import Optional
 
 from pydantic import Field
-from sqlalchemy import Column, Text, Date, Integer, ForeignKey
+from sqlalchemy import Column, Text, Date, Integer, ForeignKey, String
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import JSONType
 
@@ -13,16 +13,16 @@ from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelM
 
 # SQLAlchemy Model
 class Schedule(BaseIdMixin, Base):
-    name = Column(Text(), nullable=False)
-    type = Column(Text(), default=FrameType.FREE, nullable=False)
-    schedule_type = Column(Text(), default=ScheduleType.ONE_TIME, nullable=False)
-    status = Column(Text(), default=ScheduleStatus.CREATED, nullable=False)
+    name = Column(String(length=320), nullable=False)
+    type = Column(String(length=20), default=FrameType.FREE, nullable=False)
+    schedule_type = Column(String(length=20), default=ScheduleType.ONE_TIME, nullable=False)
+    status = Column(String(length=20), default=ScheduleStatus.CREATED, nullable=False)
     settings = Column(JSONType(), nullable=False, default={})
     message = Column(Text(), nullable=True, default="")
     start_date = Column(Date, default=0, nullable=True)
     end_date = Column(Date, default=0, nullable=True)
-    start_time = Column(Text(), default=0, nullable=True)
-    end_time = Column(Text(), default=0, nullable=True)
+    start_time = Column(String(length=20), default=0, nullable=True)
+    end_time = Column(String(length=20), default=0, nullable=True)
 
     # Relationships
     user_id = Column(Integer, ForeignKey("user.id"))

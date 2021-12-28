@@ -1,8 +1,8 @@
-"""Social Login table
+"""SocialLogin Table
 
-Revision ID: 3bd27789ad83
-Revises: 6460051a1c53
-Create Date: 2021-12-26 18:45:43.206231
+Revision ID: ddbe50dd1042
+Revises: 27d1bd8008c8
+Create Date: 2021-12-28 22:31:15.349733
 
 """
 from alembic import op
@@ -14,8 +14,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '3bd27789ad83'
-down_revision = '6460051a1c53'
+revision = 'ddbe50dd1042'
+down_revision = '27d1bd8008c8'
 branch_labels = None
 depends_on = None
 

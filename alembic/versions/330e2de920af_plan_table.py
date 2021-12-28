@@ -1,8 +1,8 @@
-"""Plan table
+"""Plan Table
 
-Revision ID: 1b96ce84aec3
-Revises: 3bd27789ad83
-Create Date: 2021-12-26 18:46:00.380898
+Revision ID: 330e2de920af
+Revises: ddbe50dd1042
+Create Date: 2021-12-28 22:31:32.583738
 
 """
 from alembic import op
@@ -14,8 +14,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '1b96ce84aec3'
-down_revision = '3bd27789ad83'
+revision = '330e2de920af'
+down_revision = 'ddbe50dd1042'
 branch_labels = None
 depends_on = None
 
@@ -27,10 +27,12 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('name', sa.Text(), nullable=False),
+    sa.Column('name', sa.String(length=30), nullable=False),
     sa.Column('max_custom_frames', sa.Integer(), nullable=False),
     sa.Column('max_frame_usage', sa.Integer(), nullable=False),
     sa.Column('max_active_schedules', sa.Integer(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=True),
+    sa.Column('currency', sa.String(length=5), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_plan'))
     )
     op.create_index(op.f('ix_plan_id'), 'plan', ['id'], unique=False)

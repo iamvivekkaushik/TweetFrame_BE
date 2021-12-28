@@ -1,8 +1,8 @@
-"""User table
+"""User Table
 
-Revision ID: 6460051a1c53
+Revision ID: 27d1bd8008c8
 Revises: 
-Create Date: 2021-12-26 18:44:07.017751
+Create Date: 2021-12-28 22:30:40.811427
 
 """
 from alembic import op
@@ -14,7 +14,7 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '6460051a1c53'
+revision = '27d1bd8008c8'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -27,24 +27,24 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('account_id', sa.String(length=320), nullable=False),
     sa.Column('oauth_name', sa.String(length=100), nullable=False),
     sa.Column('access_token', sa.String(length=1024), nullable=False),
     sa.Column('expires_at', sa.Integer(), nullable=True),
-    sa.Column('refresh_token', sa.String(length=1024), nullable=True),
-    sa.Column('account_id', sa.String(length=320), nullable=False),
-    sa.Column('account_email', sa.String(length=320), nullable=True),
-    sa.Column('full_name', sa.Text(), nullable=True),
+    sa.Column('email', sa.String(length=320), nullable=True),
+    sa.Column('full_name', sa.String(length=320), nullable=True),
     sa.Column('image', sa.Text(), nullable=True),
     sa.Column('original_image', sa.Text(), nullable=True),
-    sa.Column('username', sa.Text(), nullable=False),
+    sa.Column('username', sa.String(length=150), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('timezone', sa.String(length=100), nullable=True),
     sa.Column('twitter_response', sqlalchemy_utils.types.json.JSONType(), nullable=True),
+    sa.Column('is_superuser', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_user')),
     sa.UniqueConstraint('access_token', name=op.f('uq_user_access_token')),
     sa.UniqueConstraint('username', name=op.f('uq_user_username'))
     )
-    op.create_index(op.f('ix_user_account_id'), 'user', ['account_id'], unique=False)
+    op.create_index(op.f('ix_user_account_id'), 'user', ['account_id'], unique=True)
     op.create_index(op.f('ix_user_id'), 'user', ['id'], unique=True)
     op.create_index(op.f('ix_user_is_active'), 'user', ['is_active'], unique=False)
     op.create_index(op.f('ix_user_oauth_name'), 'user', ['oauth_name'], unique=False)

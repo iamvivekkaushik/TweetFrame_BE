@@ -21,7 +21,7 @@ def generate_request_token(db: Session) -> SocialLogin:
     return social_login
 
 
-def verify_token(db, request_body: AccessTokenGenerate) -> SocialLogin:
+def verify_token(db: Session, request_body: AccessTokenGenerate) -> SocialLogin:
     try:
         social_login_repo = SocialLoginRepository(session=db)
         request_token = request_body.request_token
@@ -49,11 +49,7 @@ def verify_token(db, request_body: AccessTokenGenerate) -> SocialLogin:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-async def generate_jwt_token(db):
-    request_token = "SnMmhgAAAAABVFMqAAABffbjl9o"
-    social_repo: SocialLoginRepository = SocialLoginRepository(db)
-    social_login = social_repo.get_by_request_token(request_token)
-
+def generate_session_token(db, social_login: SocialLogin) -> str:
     user_create = twitter_service.verify_credentials(social_login)
-    user = user_service.login_create_user(db, user_create)
-    return user
+    jwt_token = user_service.login_create_user(db, user_create)
+    return jwt_token

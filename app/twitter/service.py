@@ -1,5 +1,4 @@
 import json
-import uuid
 
 import requests
 from requests_oauthlib import OAuth1

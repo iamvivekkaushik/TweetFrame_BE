@@ -1,8 +1,8 @@
-"""Frame table
+"""Frame Table
 
-Revision ID: 4daa1c6555e0
-Revises: 158bb1a08531
-Create Date: 2021-12-26 18:46:47.750973
+Revision ID: 7070844f842a
+Revises: ed4f791e6773
+Create Date: 2021-12-28 22:32:01.347794
 
 """
 from alembic import op
@@ -14,8 +14,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '4daa1c6555e0'
-down_revision = '158bb1a08531'
+revision = '7070844f842a'
+down_revision = 'ed4f791e6773'
 branch_labels = None
 depends_on = None
 

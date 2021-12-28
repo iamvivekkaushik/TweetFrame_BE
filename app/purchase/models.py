@@ -1,16 +1,16 @@
-from typing import Optional
 from datetime import date
-from fastapi_users_db_sqlalchemy import GUID
-from sqlalchemy import Column, Text, Date, Integer, ForeignKey
+
+from sqlalchemy import Column, Text, Date, Integer, ForeignKey, String, Float
 from sqlalchemy.orm import relationship
 
 from app.database.core import Base
-from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelMixin
+from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, \
+    DateTimeModelMixin
 
 
 # SQLAlchemy Model
 class Purchase(BaseIdMixin, Base):
-    name = Column(Text(), nullable=False)
+    name = Column(String(length=320), nullable=False)
     remaining_custom_frames = Column(Integer, default=0, nullable=False)
     remaining_frame_usage = Column(Integer, default=0, nullable=False)
     remaining_active_schedules = Column(Integer, default=0, nullable=False)
@@ -18,6 +18,13 @@ class Purchase(BaseIdMixin, Base):
     end_date = Column(Date, nullable=True)
     start_time = Column(Text(), nullable=True)
     end_time = Column(Text(), nullable=True)
+    amount_paid = Column(Float, default=0.0, nullable=False)
+    currency = Column(String(length=15), nullable=False)
+    payment_id = Column(String(length=320), unique=True, nullable=False)
+    payment_status = Column(String(length=320), nullable=True)
+    payment_method = Column(String(length=320), nullable=True)
+    billing_address = Column(Text, nullable=True)
+    shipping_address = Column(Text, nullable=True)
 
     # Relationships
     user_id = Column(Integer, ForeignKey("user.id"))

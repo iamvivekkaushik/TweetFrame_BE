@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import Column, Text, Integer
+from sqlalchemy import Column, Text, Integer, Float, String
 from sqlalchemy.orm import relationship
 
 from app.database.core import Base
@@ -9,10 +9,12 @@ from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelM
 
 # SQLAlchemy Model
 class Plan(BaseIdMixin, Base):
-    name = Column(Text(), nullable=False)
+    name = Column(String(30), nullable=False)
     max_custom_frames = Column(Integer, default=0, nullable=False)
     max_frame_usage = Column(Integer, default=0, nullable=False)
     max_active_schedules = Column(Integer, default=0, nullable=False)
+    price = Column(Float, default=0.0, nullable=True)
+    currency = Column(String(length=5), default='USD', nullable=False)
 
     # Relationship...
     purchases = relationship("Purchase", back_populates="plan")
@@ -24,6 +26,8 @@ class PlanBase(TweetFrameBase):
     max_custom_frames: int
     max_frame_usage: int
     max_active_schedules: int
+    price: float
+    currency: str
 
 
 class PlanResponse(IDModelMixin, DateTimeModelMixin, PlanBase):

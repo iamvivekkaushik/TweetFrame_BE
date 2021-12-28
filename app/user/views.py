@@ -36,6 +36,3 @@ register_router = fastapi.get_register_router()
 verify_router = fastapi.get_verify_router()
 
 user_router = fastapi.get_users_router(requires_verification=False)
-
-# Dependencies
-current_active_user = fastapi.current_user(active=True)

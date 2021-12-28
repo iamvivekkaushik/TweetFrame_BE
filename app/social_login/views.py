@@ -6,10 +6,7 @@ from app.database.core import get_db
 from app.social_login.models import (
     RequestTokenCreate,
     AccessTokenGenerate,
-    SocialLoginResponse,
 )
-from app.user.models import UserCreateResponse
-from sqlalchemy.exc import NoResultFound
 
 social_router = APIRouter(
     tags=["social_login"],
@@ -43,7 +40,6 @@ def generate_twitter_request_url(db: Session = Depends(get_db)):
 
 @social_router.post(
     "/twitter/verify",
-    response_model=SocialLoginResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def verify_twitter_token(
@@ -62,18 +58,5 @@ async def verify_twitter_token(
         )
 
     # generate login session token
-    # social_login_token = social_service.login_signup_user(db, social_login)
-
-    return social_login
-
-
-@social_router.get("/twitter/signup", status_code=status.HTTP_201_CREATED)
-async def temp_signup(db: Session = Depends(get_db)):
-    try:
-        user = await social_service.generate_jwt_token(db)
-        return user
-    except NoResultFound:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Unable to signup user",
-        )
+    session_token = social_service.generate_session_token(db, social_login)
+    return session_token
