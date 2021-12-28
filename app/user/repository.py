@@ -1,17 +1,11 @@
-from fastapi import Depends
 from fastapi import Query
-from fastapi_users import BaseUserManager
-from fastapi_users.db import SQLAlchemyUserDatabase
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
-from app.config import RESET_PASSWORD_TOKEN_SECRET, VERIFICATION_TOKEN_SECRET
 from app.database.repository import BaseRepository
 from app.user.models import (
     User,
-    get_user_db,
     UserBase,
-    UserDB,
     UserCreate,
     UserUpdate,
 )
@@ -69,13 +63,3 @@ class UserRepository(BaseRepository):
         self.session.refresh(db_obj)
 
         return db_obj
-
-
-class UserManager(BaseUserManager[UserCreate, UserDB]):
-    user_db_model = UserDB
-    reset_password_token_secret = RESET_PASSWORD_TOKEN_SECRET
-    verification_token_secret = VERIFICATION_TOKEN_SECRET
-
-
-async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
-    yield UserManager(user_db)

@@ -4,8 +4,7 @@ from sqlalchemy import Column, Text, Date, Integer, ForeignKey, String, Float
 from sqlalchemy.orm import relationship
 
 from app.database.core import Base
-from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, \
-    DateTimeModelMixin
+from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelMixin
 
 
 # SQLAlchemy Model

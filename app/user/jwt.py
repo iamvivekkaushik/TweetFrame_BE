@@ -14,7 +14,7 @@ from app.user.repository import UserRepository
 
 SecretType = Union[str, Secret]
 JWT_ALGORITHM = "HS256"
-VERIFY_USER_TOKEN_AUDIENCE = "fastapi-users:verify"
+VERIFY_USER_TOKEN_AUDIENCE = "tweet_frames_user:verify"
 
 
 def _get_secret_value(secret: SecretType) -> str:

@@ -1,38 +1,18 @@
-from fastapi_users import FastAPIUsers
+from fastapi import APIRouter, Depends, status
 
-from app.config import (
-    auth_backends,
-    jwt_authentication,
+from app.user.jwt import get_current_user
+from app.user.models import User, UserResponse
+
+user_router = APIRouter()
+
+
+@user_router.get(
+    "/me",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
 )
-from app.user.models import (
-    UserBase,
-    UserDB,
-    UserCreate,
-    UserUpdate,
-)
-from app.user.repository import get_user_manager
-
-fastapi = FastAPIUsers(
-    get_user_manager,
-    auth_backends,
-    UserBase,
-    UserCreate,
-    UserUpdate,
-    UserDB,
-)
-
-
-# provides /login and /logout
-auth_router = fastapi.get_auth_router(
-    backend=jwt_authentication, requires_verification=False
-)
-
-# provides /register for user sign up
-register_router = fastapi.get_register_router()
-
-
-# provides routes to manage user
-# provides /request-verify-token and /verify
-verify_router = fastapi.get_verify_router()
-
-user_router = fastapi.get_users_router(requires_verification=False)
+def get_user_profile(user: User = Depends(get_current_user)):
+    """
+    Get the current user profile
+    """
+    return user

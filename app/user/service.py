@@ -18,17 +18,15 @@ def login_create_user(db: Session, user_create: UserCreate):
         user_update = UserUpdate(**user_create.__dict__)
         user = user_repo.update(user.id, user_update)
         token = generate_token(user)
-        return token
+        return token, user
     except NoResultFound as e:
         print("=======================")
-        print("Result not found, user creating ...")
+        print("User not found, creating ...")
         print("=======================")
         # User doesn't exist, create it
         user = user_repo.create(user_create)
-        print("USER CREATED")
-        print(user)
         token = generate_token(user)
-        return token
+        return token, user
 
 
 def generate_token(user: User) -> str:

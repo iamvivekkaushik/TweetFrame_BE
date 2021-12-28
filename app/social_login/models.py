@@ -30,10 +30,6 @@ class SocialLoginBase(TweetFrameBase):
     access_secret: str
 
 
-class SocialLoginResponse(IDModelMixin, DateTimeModelMixin, TweetFrameBase):
-    request_token: str
-
-
 class SocialLoginCreate(SocialLoginBase):
     request_verifier: Optional[str]
     access_token: Optional[str]
@@ -45,11 +41,11 @@ class SocialLoginUpdate(SocialLoginCreate):
     request_secret: Optional[str]
 
 
-class RequestTokenCreate(TweetFrameBase):
+class RequestTokenResponse(TweetFrameBase):
     request_token: str
     auth_url: str
 
 
-class AccessTokenGenerate(TweetFrameBase):
+class AccessTokenCreate(TweetFrameBase):
     request_token: str
     verifier: str

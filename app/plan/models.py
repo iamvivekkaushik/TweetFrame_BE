@@ -14,7 +14,7 @@ class Plan(BaseIdMixin, Base):
     max_frame_usage = Column(Integer, default=0, nullable=False)
     max_active_schedules = Column(Integer, default=0, nullable=False)
     price = Column(Float, default=0.0, nullable=True)
-    currency = Column(String(length=5), default='USD', nullable=False)
+    currency = Column(String(length=5), default="USD", nullable=False)
 
     # Relationship...
     purchases = relationship("Purchase", back_populates="plan")

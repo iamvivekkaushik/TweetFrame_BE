@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 import app.social_login.service as social_service
 from app.database.core import get_db
 from app.social_login.models import (
-    RequestTokenCreate,
-    AccessTokenGenerate,
+    RequestTokenResponse,
+    AccessTokenCreate,
 )
 
 social_router = APIRouter(
@@ -15,7 +15,7 @@ social_router = APIRouter(
 
 @social_router.get(
     "/twitter/request_token",
-    response_model=RequestTokenCreate,
+    response_model=RequestTokenResponse,
     status_code=status.HTTP_201_CREATED,
 )
 def generate_twitter_request_url(db: Session = Depends(get_db)):
@@ -34,7 +34,7 @@ def generate_twitter_request_url(db: Session = Depends(get_db)):
     auth_url = "https://api.twitter.com/oauth/authorize?oauth_token={}".format(
         request_token
     )
-    response = RequestTokenCreate(request_token=request_token, auth_url=auth_url)
+    response = RequestTokenResponse(request_token=request_token, auth_url=auth_url)
     return response
 
 
@@ -42,9 +42,7 @@ def generate_twitter_request_url(db: Session = Depends(get_db)):
     "/twitter/verify",
     status_code=status.HTTP_201_CREATED,
 )
-async def verify_twitter_token(
-    body: AccessTokenGenerate, db: Session = Depends(get_db)
-):
+async def verify_twitter_token(body: AccessTokenCreate, db: Session = Depends(get_db)):
     """
     Verify the oauth token and verifier
     """

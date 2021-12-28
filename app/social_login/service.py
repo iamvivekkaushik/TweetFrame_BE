@@ -4,13 +4,12 @@ from sqlalchemy.orm import Session
 
 from app.social_login.models import (
     SocialLogin,
-    AccessTokenGenerate,
+    AccessTokenCreate,
     SocialLoginUpdate,
     SocialLoginCreate,
 )
 from app.social_login.repository import SocialLoginRepository
 from app.twitter import service as twitter_service
-from app.user.models import UserCreate
 from app.user import service as user_service
 
 
@@ -21,7 +20,7 @@ def generate_request_token(db: Session) -> SocialLogin:
     return social_login
 
 
-def verify_token(db: Session, request_body: AccessTokenGenerate) -> SocialLogin:
+def verify_token(db: Session, request_body: AccessTokenCreate) -> SocialLogin:
     try:
         social_login_repo = SocialLoginRepository(session=db)
         request_token = request_body.request_token
@@ -51,5 +50,8 @@ def verify_token(db: Session, request_body: AccessTokenGenerate) -> SocialLogin:
 
 def generate_session_token(db, social_login: SocialLogin) -> str:
     user_create = twitter_service.verify_credentials(social_login)
-    jwt_token = user_service.login_create_user(db, user_create)
+    jwt_token, user = user_service.login_create_user(db, user_create)
+
+    social_repo = SocialLoginRepository(db)
+    social_repo.update(object_id=social_login.id, obj_in={"user_id": user.id})
     return jwt_token

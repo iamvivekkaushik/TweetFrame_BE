@@ -95,11 +95,10 @@ def verify_credentials(social_login: SocialLogin):
     # convert bytes to string
     body = json.loads(body)
     user_obj = {
-        # "id": uuid.uuid4(),
         "oauth_name": "Twitter",
         "access_token": social_login.access_token,
         "account_id": body["id_str"],
-        "account_email": None,
+        "email": None,
         "full_name": body["name"],
         "image": body["profile_image_url_https"],
         "original_image": body["profile_image_url_https"],

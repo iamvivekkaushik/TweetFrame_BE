@@ -15,7 +15,9 @@ from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelM
 class Schedule(BaseIdMixin, Base):
     name = Column(String(length=320), nullable=False)
     type = Column(String(length=20), default=FrameType.FREE, nullable=False)
-    schedule_type = Column(String(length=20), default=ScheduleType.ONE_TIME, nullable=False)
+    schedule_type = Column(
+        String(length=20), default=ScheduleType.ONE_TIME, nullable=False
+    )
     status = Column(String(length=20), default=ScheduleStatus.CREATED, nullable=False)
     settings = Column(JSONType(), nullable=False, default={})
     message = Column(Text(), nullable=True, default="")

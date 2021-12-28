@@ -1,14 +1,13 @@
 from typing import Optional
 
 from fastapi_users import models
-from fastapi_users.db import SQLAlchemyUserDatabase
 from pydantic import Field
 from sqlalchemy import Column, Text, String, Integer, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import JSONType
 
-from app.database.core import Base, database
-from app.models import TweetFrameBase
+from app.database.core import Base
+from app.models import TweetFrameBase, IDModelMixin, DateTimeModelMixin
 
 
 # SQLAlchemy Model
@@ -37,9 +36,6 @@ class User(Base):
 
 # Pydantic models...
 class UserBase(TweetFrameBase):
-    oauth_name: Optional[str] = Field("Twitter")
-    access_token: str
-    expires_at: Optional[int] = None
     account_id: str
     email: Optional[str]
     full_name: Optional[str]
@@ -50,13 +46,15 @@ class UserBase(TweetFrameBase):
     timezone: Optional[str]
 
 
-class UserCreate(UserBase):
-    account_email: Optional[str]
-    twitter_response: dict
-
-
-class UserCreateResponse(UserBase):
+class UserResponse(DateTimeModelMixin, UserBase, IDModelMixin):
     pass
+
+
+class UserCreate(UserBase):
+    oauth_name: Optional[str] = Field("Twitter")
+    access_token: str
+    expires_at: Optional[int] = None
+    twitter_response: dict
 
 
 class UserUpdate(UserBase):
@@ -65,8 +63,3 @@ class UserUpdate(UserBase):
 
 class UserDB(UserBase, models.BaseUserDB):
     twitter_response: dict
-
-
-async def get_user_db():
-    users = User.__table__
-    yield SQLAlchemyUserDatabase(UserDB, database, users)
