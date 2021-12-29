@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 from sqlalchemy import Column, Text, Date, Integer, ForeignKey, String, Float
 from sqlalchemy.orm import relationship
@@ -45,7 +46,7 @@ class PurchaseBase(TweetFrameBase):
     end_time: str
 
 
-class PurchaseResponse(IDModelMixin, DateTimeModelMixin, PurchaseBase):
+class PurchaseResponse(DateTimeModelMixin, PurchaseBase, IDModelMixin):
     is_active: bool
 
 
@@ -53,22 +54,21 @@ class PurchaseCreate(PurchaseBase):
     pass
 
 
-class PurchaseCreateResponse(IDModelMixin, DateTimeModelMixin, PurchaseCreate):
+class PurchaseCreateResponse(DateTimeModelMixin, PurchaseCreate, IDModelMixin):
     pass
 
 
-class PurchaseUpdate(TweetFrameBase):
-    # name = Optional[str]
-    # remaining_custom_frames: Optional[int]
-    # remaining_frame_usage: Optional[int]
-    # remaining_active_schedules: Optional[int]
-    # start_date: Optional[date]
-    # end_date: Optional[date]
-    # start_time: Optional[str]
-    # end_time: Optional[str]
-    # is_active = Optional[bool]
-    pass
+class PurchaseUpdate(PurchaseBase):
+    name: Optional[str]
+    remaining_custom_frames: Optional[int]
+    remaining_frame_usage: Optional[int]
+    remaining_active_schedules: Optional[int]
+    start_date: Optional[date]
+    end_date: Optional[date]
+    start_time: Optional[str]
+    end_time: Optional[str]
+    is_active: Optional[bool]
 
 
-class PurchaseUpdateResponse(IDModelMixin, DateTimeModelMixin, PurchaseUpdate):
+class PurchaseUpdateResponse(DateTimeModelMixin, PurchaseUpdate, IDModelMixin):
     pass

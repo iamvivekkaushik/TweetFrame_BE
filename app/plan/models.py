@@ -1,6 +1,7 @@
 from typing import Optional
 
-from sqlalchemy import Column, Text, Integer, Float, String
+from pydantic import BaseModel, Field
+from sqlalchemy import Column, Integer, Float, String
 from sqlalchemy.orm import relationship
 
 from app.database.core import Base
@@ -27,10 +28,10 @@ class PlanBase(TweetFrameBase):
     max_frame_usage: int
     max_active_schedules: int
     price: float
-    currency: str
+    currency: str = Field("USD")
 
 
-class PlanResponse(IDModelMixin, DateTimeModelMixin, PlanBase):
+class PlanResponse(DateTimeModelMixin, PlanBase, IDModelMixin):
     pass
 
 
@@ -38,18 +39,19 @@ class PlanCreate(PlanBase):
     pass
 
 
-class PlanCreateResponse(IDModelMixin, DateTimeModelMixin, PlanCreate):
+class PlanCreateResponse(DateTimeModelMixin, PlanCreate, IDModelMixin):
     pass
 
 
-class PlanUpdate(TweetFrameBase):
-    # name = Optional[str]
-    # max_custom_frames = Optional[int]
-    # max_frame_usage = Optional[int]
-    # max_active_schedules = Optional[int]
-    # is_active = Optional[bool]
-    pass
+class PlanUpdate(PlanBase):
+    name: Optional[str]
+    max_custom_frames: Optional[int]
+    max_frame_usage: Optional[int]
+    max_active_schedules: Optional[int]
+    price: Optional[float]
+    currency: str = Field("USD")
+    is_active: Optional[bool]
 
 
-class PlanUpdateResponse(IDModelMixin, DateTimeModelMixin, PlanUpdate):
+class PlanUpdateResponse(DateTimeModelMixin, PlanUpdate, IDModelMixin):
     pass

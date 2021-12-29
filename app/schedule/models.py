@@ -49,7 +49,7 @@ class ScheduleBase(TweetFrameBase):
     frame_id: int
 
 
-class ScheduleResponse(IDModelMixin, DateTimeModelMixin, ScheduleBase):
+class ScheduleResponse(DateTimeModelMixin, ScheduleBase, IDModelMixin):
     is_active: bool
 
 
@@ -58,25 +58,24 @@ class ScheduleCreate(ScheduleBase):
     is_active: bool = Field(default=True)
 
 
-class ScheduleCreateResponse(IDModelMixin, DateTimeModelMixin, ScheduleCreate):
+class ScheduleCreateResponse(DateTimeModelMixin, ScheduleCreate, IDModelMixin):
     pass
 
 
 class ScheduleUpdate(TweetFrameBase):
-    # name = Optional[str]
-    # type: Optional[str]
-    # schedule_type: Optional[str]
-    # status: Optional[str]
-    # settings: Optional[dict]
-    # message: Optional[str]
-    # start_date: Optional[date]
-    # end_date: Optional[date]
-    # start_time: Optional[str]
-    # end_time: Optional[str]
-    # is_active = Optional[bool]
-    # frame_id: Optional[int]
-    pass
+    name: Optional[str]
+    type: Optional[str]
+    schedule_type: Optional[str]
+    status: Optional[str]
+    settings: Optional[dict]
+    message: Optional[str]
+    start_date: Optional[date]
+    end_date: Optional[date]
+    start_time: Optional[str]
+    end_time: Optional[str]
+    frame_id: Optional[int]
+    is_active: Optional[bool]
 
 
-class ScheduleUpdateResponse(IDModelMixin, DateTimeModelMixin, ScheduleUpdate):
+class ScheduleUpdateResponse(DateTimeModelMixin, ScheduleUpdate, IDModelMixin):
     pass

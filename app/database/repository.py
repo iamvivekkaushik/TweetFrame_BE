@@ -1,13 +1,13 @@
 from typing import TypeVar, List, Dict, Any, Union
 
-from fastapi import Query
+from fastapi import Query, HTTPException
 from loguru import logger
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.database.core import Base
 from app.models import TweetFrameBase
-from app.user.models import UserBase
+from app.user.models import UserBase, User
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -29,19 +29,23 @@ class BaseRepository:
     def session(self) -> Session:
         return self._session
 
-    def get_all(self, user: UserBase, skip=0, limit=100) -> List[ModelType]:
+    def get_all(self, user: User = None, skip=0, limit=100) -> List[ModelType]:
         """Returns all the available objects for a user."""
-        query: Query = (
-            self.session.query(self.model)
-            .filter(self.model.user_id == user.id)
-            .offset(skip)
-            .limit(limit)
-        )
+        query: Query = self.session.query(self.model)
+
+        if user:
+            query = query.filter(self.model.user_id == user.id)
+
+        query = query.offset(skip).limit(limit)
         return query.all()
 
-    def get(self, object_id: int) -> ModelType:
+    def get(self, object_id: int, user: User = None) -> ModelType:
         """Returns a single model object using its ID."""
-        query: Query = self.session.query(self.model).filter(self.model.id == object_id)
+        query: Query = self.session.query(self.model).filter(
+            self.model.id == object_id)
+
+        if user:
+            query = query.filter(self.model.user_id == user.id)
         return query.one()
 
     def create(self, object_in: TweetFrameBase):
@@ -60,9 +64,16 @@ class BaseRepository:
         return db_obj
 
     def update(
-        self, *, object_id: int, obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+        self,
+        *,
+        object_id: int,
+        obj_in: Union[UpdateSchemaType, Dict[str, Any]],
+        user: User = None,
     ) -> ModelType:
         db_obj = self.get(object_id)
+
+        if user and user.id != db_obj.user_id:
+            raise HTTPException("User does not have permission to update this object.")
 
         obj_data = db_obj.__dict__
 
@@ -87,3 +98,4 @@ class BaseRepository:
 
         if db_obj:
             self.session.delete(db_obj)
+            self.session.commit()

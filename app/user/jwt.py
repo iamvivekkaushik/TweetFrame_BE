@@ -52,18 +52,12 @@ def decode_jwt(
 def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
     try:
         token = request.headers.get("Authorization")
-        print(request.headers)
         # remove bearer from token
         token = token.split(" ")[1]
-        print("==================")
         payload = decode_jwt(token, SECRET_KEY, [VERIFY_USER_TOKEN_AUDIENCE])
-        print("==================")
-        print("payload", payload)
-        print(payload)
         user_repo = UserRepository(db)
         account_id = payload["account_id"]
         valid_upto = payload["exp"]
-        print(valid_upto)
         user: User = user_repo.get_by_oauth_account(account_id)
 
         # if user is not active throw error

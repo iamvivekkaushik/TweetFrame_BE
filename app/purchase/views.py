@@ -1,0 +1,45 @@
+from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
+from starlette import status
+
+from app.database.core import get_db
+from app.purchase.models import (
+    PurchaseResponse,
+)
+from app.purchase.repository import PurchaseRepository
+from app.user.jwt import get_current_user
+from app.user.models import User
+
+purchase_router = APIRouter()
+
+
+@purchase_router.get("", response_model=List[PurchaseResponse])
+def get_all_purchases(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Returns all the Purchases available for a user."""
+    purchase_repo = PurchaseRepository(session=db)
+    purchase_list = purchase_repo.get_all(user=user)
+    return purchase_list
+
+
+@purchase_router.get("/{purchase_id}", response_model=PurchaseResponse)
+def get_purchase(
+    purchase_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Get a single Purchase using Object ID."""
+    try:
+        purchase_repo = PurchaseRepository(session=db)
+        purchase = purchase_repo.get(purchase_id, user=user)
+        return purchase
+    except NoResultFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="You don't have access to this purchase.",
+        )
