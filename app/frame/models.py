@@ -29,13 +29,13 @@ class Frame(BaseIdMixin, Base):
 class FrameBase(TweetFrameBase):
     name: str
     url: str
-    type: FrameType
-    schedule_type: ScheduleType
+    type: str
+    schedule_type: str
     settings: Optional[dict]
     is_public: bool
 
 
-class FrameResponse(IDModelMixin, DateTimeModelMixin, FrameBase):
+class FrameResponse(DateTimeModelMixin, FrameBase, IDModelMixin):
     pass
 
 
@@ -43,20 +43,19 @@ class FrameCreate(FrameBase):
     user_id: Optional[int]
 
 
-class FrameCreateResponse(IDModelMixin, DateTimeModelMixin, FrameCreate):
+class FrameCreateResponse(DateTimeModelMixin, FrameCreate, IDModelMixin):
     pass
 
 
-class FrameUpdate(TweetFrameBase):
-    # name = Optional[str]
-    # url: Optional[str]
-    # type: Optional[FrameType]
-    # schedule_type: Optional[ScheduleType]
-    # settings: Optional[dict]
-    # is_public: Optional[bool]
-    # is_active = Optional[bool]
-    pass
+class FrameUpdate(FrameBase):
+    name: Optional[str]
+    url: Optional[str]
+    type: Optional[str]
+    schedule_type: Optional[str]
+    settings: Optional[dict]
+    is_public: Optional[bool]
+    is_active: Optional[bool]
 
 
-class FrameUpdateResponse(IDModelMixin, DateTimeModelMixin, FrameUpdate):
+class FrameUpdateResponse(DateTimeModelMixin, FrameUpdate, IDModelMixin):
     pass

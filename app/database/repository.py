@@ -41,8 +41,7 @@ class BaseRepository:
 
     def get(self, object_id: int, user: User = None) -> ModelType:
         """Returns a single model object using its ID."""
-        query: Query = self.session.query(self.model).filter(
-            self.model.id == object_id)
+        query: Query = self.session.query(self.model).filter(self.model.id == object_id)
 
         if user:
             query = query.filter(self.model.user_id == user.id)

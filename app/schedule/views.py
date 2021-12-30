@@ -12,10 +12,9 @@ from app.schedule.models import (
     ScheduleUpdateResponse,
     ScheduleUpdate,
 )
-
 from app.schedule.repository import ScheduleRepository
-from app.user.models import UserBase, User
 from app.user.jwt import get_current_user
+from app.user.models import User
 
 schedule_router = APIRouter()
 

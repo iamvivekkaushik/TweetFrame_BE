@@ -109,3 +109,6 @@ venv.bak/
 
 # Project
 postgres-data
+
+# data
+media

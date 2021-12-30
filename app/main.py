@@ -1,10 +1,14 @@
+import os.path
+
 import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
+from fastapi.staticfiles import StaticFiles
 
 from app import config
 from app.api import router as api_router
+from app.config import BASE_DIR
 from app.database.core import database, get_db
 from app.events import app_startup_event_handler, app_stop_event_handler
 
@@ -51,6 +55,12 @@ app.add_event_handler("shutdown", app_stop_event_handler(app))
 
 # we add all API routes to the Web API framework
 app.include_router(api_router, prefix=config.API_PREFIX)
+
+
+# For media files
+app.mount(
+    "/media", StaticFiles(directory=os.path.join(BASE_DIR, "media")), name="media"
+)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
