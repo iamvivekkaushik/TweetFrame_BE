@@ -23,6 +23,8 @@ ALLOWED_HOSTS: List[str] = config(
     cast=CommaSeparatedStrings,
     default="",
 )
+ENVIRONMENT: str = config("ENVIRONMENT", default="development")
+DOMAIN: str = config("DOMAIN", default="localhost")
 SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret)
 DEBUG: bool = config("DEBUG", cast=bool, default=False)
 

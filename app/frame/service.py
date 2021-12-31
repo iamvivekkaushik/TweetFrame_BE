@@ -6,8 +6,20 @@ from fastapi import UploadFile, HTTPException, status
 from PIL import ImageFile
 import shutil
 
-from app.config import BASE_DIR
+from app import config
 
+
+def create_image_url(path: str) -> str:
+    """
+    Create image url
+    """
+    if path.startswith("http"):
+        return path
+
+    protocol = "https://"
+    if config.ENVIRONMENT == "development":
+        protocol = "http://"
+    return protocol + config.DOMAIN + "/" + path
 
 
 def validate_file(frame: UploadFile):
@@ -33,7 +45,7 @@ def save_image(frame: UploadFile, path: str = "media/frames"):
     """
     Save image to file
     """
-    media_folder = os.path.join(BASE_DIR, path)
+    media_folder = os.path.join(config.BASE_DIR, path)
     if not os.path.exists(media_folder):
         os.makedirs(media_folder)
 

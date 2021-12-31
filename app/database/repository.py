@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.database.core import Base
 from app.models import TweetFrameBase
-from app.user.models import UserBase, User
+from app.user.models import User
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
