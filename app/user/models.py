@@ -1,6 +1,5 @@
 from typing import Optional
 
-from fastapi_users import models
 from pydantic import Field
 from sqlalchemy import Column, Text, String, Integer, Boolean
 from sqlalchemy.orm import relationship
@@ -63,5 +62,5 @@ class UserUpdate(UserBase):
     pass
 
 
-class UserDB(UserBase, models.BaseUserDB):
+class UserDB(UserBase):
     twitter_response: dict

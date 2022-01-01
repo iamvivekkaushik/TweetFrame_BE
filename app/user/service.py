@@ -1,7 +1,7 @@
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from app.config import jwt_authentication, SECRET_KEY
+from app.config import SECRET_KEY
 from app.user.jwt import generate_jwt, VERIFY_USER_TOKEN_AUDIENCE
 from app.user.models import UserCreate, User
 from app.user.repository import UserRepository
@@ -47,7 +47,7 @@ def generate_token(user: User) -> str:
     token = generate_jwt(
         token_data,
         SECRET_KEY,
-        jwt_authentication.lifetime_seconds,
+        36000,
     )
     return token
 

@@ -3,7 +3,6 @@ import os
 from typing import List
 
 from databases import DatabaseURL
-from fastapi_users.authentication import JWTAuthentication
 from starlette.config import Config
 from starlette.datastructures import CommaSeparatedStrings, Secret
 
@@ -46,12 +45,3 @@ TWITTER_API_KEY: str = config("TWITTER_API_KEY", default="")
 TWITTER_API_SECRET: str = config("TWITTER_API_SECRET", default="")
 TWITTER_ACCESS_TOKEN: str = config("TWITTER_ACCESS_TOKEN", default="")
 TWITTER_ACCESS_TOKEN_SECRET: str = config("TWITTER_ACCESS_TOKEN_SECRET", default="")
-
-
-#
-# Authentication configuration
-auth_backends = []
-
-jwt_authentication = JWTAuthentication(secret=str(SECRET_KEY), lifetime_seconds=360000)
-
-auth_backends.append(jwt_authentication)
