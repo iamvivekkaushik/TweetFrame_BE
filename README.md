@@ -32,5 +32,5 @@ uvicorn app.main:app --reload
 Use the alembic command to generate a new migration.
 
 ```bash
-alembic revision -m "migration-name"
+alembic revision --autogenerate -m "migration-name"
 ```
