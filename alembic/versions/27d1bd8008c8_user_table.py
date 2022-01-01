@@ -40,8 +40,10 @@ def upgrade():
     sa.Column('timezone', sa.String(length=100), nullable=True),
     sa.Column('twitter_response', sqlalchemy_utils.types.json.JSONType(), nullable=True),
     sa.Column('is_superuser', sa.Boolean(), nullable=False),
+    sa.Column('access_secret', sa.String(length=100), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_user')),
     sa.UniqueConstraint('access_token', name=op.f('uq_user_access_token')),
+    sa.UniqueConstraint('access_secret', name=op.f('uq_user_access_secret')),
     sa.UniqueConstraint('username', name=op.f('uq_user_username'))
     )
     op.create_index(op.f('ix_user_account_id'), 'user', ['account_id'], unique=True)

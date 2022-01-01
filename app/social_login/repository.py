@@ -15,3 +15,10 @@ class SocialLoginRepository(BaseRepository):
             self.model.request_token == request_token
         )
         return query.one()
+
+    def get_by_access_token(self, access_token: str) -> SocialLogin:
+        """Returns a single model object using its ID."""
+        query: Query = self.session.query(self.model).filter(
+            self.model.access_token == access_token
+        )
+        return query.one()

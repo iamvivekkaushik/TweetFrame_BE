@@ -5,7 +5,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from starlette import status
 
+from app import Purchase
 from app.database.core import get_db
+from app.purchase.models import PurchaseUpdate
+from app.purchase.repository import PurchaseRepository
+from app.schedule.job_handler import handle_schedule
 from app.schedule.models import (
     ScheduleResponse,
     ScheduleCreate,
@@ -13,6 +17,7 @@ from app.schedule.models import (
     ScheduleUpdate,
 )
 from app.schedule.repository import ScheduleRepository
+from app.scheduler import scheduler
 from app.user.jwt import get_current_user
 from app.user.models import User
 
@@ -55,11 +60,49 @@ def create_schedule(
     user: User = Depends(get_current_user),
 ):
     """Handle request to create a new Schedule."""
-    data.user_id = user.id
+    try:
+        purchase_repo = PurchaseRepository(db)
+        purchase: Purchase = purchase_repo.get_active_purchase(user)
 
-    schedule_repo = ScheduleRepository(session=db)
-    schedule = schedule_repo.create(data)
-    return schedule
+        if not purchase:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No active purchase found for user",
+            )
+
+        remaining_active_schedules = purchase.remaining_active_schedules
+        if not user.is_superuser and remaining_active_schedules <= 0:
+            raise HTTPException(
+                status_code=status.HTTP_402_PAYMENT_REQUIRED,
+                detail="Active schedules limit reached. Please Upgrade your plan.",
+            )
+
+        schedule_repo = ScheduleRepository(session=db)
+        data.user_id = user.id
+        schedule = schedule_repo.create(data)
+
+        scheduler.add_job(
+            func=handle_schedule,
+            kwargs={"schedule_id": schedule.id},
+            max_instances=1,
+            id=str(schedule.id),
+            replace_existing=True,
+        )
+
+        remaining_active_schedules -= 1
+        purchase_repo.update(
+            object_id=purchase.id,
+            obj_in=PurchaseUpdate(
+                remaining_active_schedules=remaining_active_schedules
+            ),
+        )
+        return schedule
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
 
 
 @schedule_router.patch("/{schedule_id}", response_model=ScheduleUpdateResponse)

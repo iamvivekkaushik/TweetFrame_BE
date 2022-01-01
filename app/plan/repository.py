@@ -12,6 +12,15 @@ class PlanRepository(BaseRepository):
     def __init__(self, session: Session) -> None:
         super().__init__(session=session, model=Plan, model_base=PlanBase)
 
+    def get_plan_by_name(self, name: str) -> Plan:
+        """Returns a Plan by name"""
+        query: Query = (
+            self.session.query(self.model)
+            .filter(self.model.name == name)
+            .filter(self.model.is_active == true())
+        )
+        return query.first()
+
     def get_all_plans(self, skip=0, limit=100) -> List[Plan]:
         """Returns all the available Plans"""
         query: Query = (

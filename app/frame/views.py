@@ -4,12 +4,14 @@ from fastapi import APIRouter, Form, UploadFile, File, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
-from app.config import DOMAIN
+from app import Purchase
 from app.database.core import get_db
 from app.enums import ScheduleType, FrameType
 from app.frame import service as frame_service
 from app.frame.models import FrameResponse, FrameCreate, FrameUpdate
 from app.frame.repository import FrameRepository
+from app.purchase.models import PurchaseUpdate
+from app.purchase.repository import PurchaseRepository
 from app.user.jwt import get_current_user
 from app.user.models import User
 
@@ -53,6 +55,22 @@ async def create_frame(
     Create a new frame.
     """
     try:
+        purchase_repo = PurchaseRepository(db)
+        purchase: Purchase = purchase_repo.get_active_purchase(user)
+
+        if not purchase:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No active purchase found for user",
+            )
+
+        remaining_custom_frames = purchase.remaining_custom_frames
+        if not user.is_superuser and remaining_custom_frames <= 0:
+            raise HTTPException(
+                status_code=status.HTTP_402_PAYMENT_REQUIRED,
+                detail="No more custom frames allowed. Please Upgrade your plan.",
+            )
+
         frame_service.validate_file(frame)
         # save the frame to /media/frames/
         file_path = frame_service.save_image(frame)
@@ -72,6 +90,12 @@ async def create_frame(
 
         frame_repo = FrameRepository(db)
         frame = frame_repo.create(object_in=frame_create)
+
+        remaining_custom_frames -= 1
+        purchase_repo.update(
+            object_id=purchase.id,
+            obj_in=PurchaseUpdate(remaining_custom_frames=remaining_custom_frames),
+        )
         return frame
     finally:
         if hasattr(frame, "file"):

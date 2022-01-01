@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.config import jwt_authentication, SECRET_KEY
 from app.user.jwt import generate_jwt, VERIFY_USER_TOKEN_AUDIENCE
-from app.user.models import UserCreate, User, UserUpdate
+from app.user.models import UserCreate, User
 from app.user.repository import UserRepository
 
 
@@ -15,8 +15,9 @@ def login_create_user(db: Session, user_create: UserCreate):
 
         print("USER FOUND")
         # user found
-        user_update = UserUpdate(**user_create.__dict__)
-        user = user_repo.update(user.id, user_update)
+        user_create.original_image = None
+        user_create.image = None
+        user = user_repo.update(object_id=user.id, obj_in=user_create)
         token = generate_token(user)
         return token, user
     except NoResultFound as e:
@@ -49,3 +50,9 @@ def generate_token(user: User) -> str:
         jwt_authentication.lifetime_seconds,
     )
     return token
+
+
+def refresh_user_profile(db: Session, user: User, user_create: UserCreate):
+    user_repo = UserRepository(db)
+    user = user_repo.update(object_id=user.id, obj_in=user_create)
+    return user

@@ -54,6 +54,7 @@ class ScheduleResponse(DateTimeModelMixin, ScheduleBase, IDModelMixin):
 
 
 class ScheduleCreate(ScheduleBase):
+    user_id: Optional[int]
     frame_id: int
     is_active: bool = Field(default=True)
 

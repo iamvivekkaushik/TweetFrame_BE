@@ -4,16 +4,18 @@ import requests
 from requests_oauthlib import OAuth1
 
 from app.config import TWITTER_API_KEY, TWITTER_API_SECRET
+from app.frame.models import Frame
 from app.social_login.models import SocialLogin, SocialLoginCreate, SocialLoginUpdate
-from app.user.models import UserCreate
+from app.user.models import UserCreate, User
+from app.utils.helper import generate_frame_image
 
 
-def get_oauth_header(social_login: SocialLogin) -> OAuth1:
+def get_oauth_header(user: User) -> OAuth1:
     oauth: OAuth1 = OAuth1(
         TWITTER_API_KEY,
         TWITTER_API_SECRET,
-        social_login.access_token,
-        social_login.access_secret,
+        user.access_token,
+        user.access_secret,
     )
 
     return oauth
@@ -80,8 +82,14 @@ def exchange_access_token(
     return social_obj
 
 
-def verify_credentials(social_login: SocialLogin):
-    oauth = get_oauth_header(social_login)
+def verify_credentials(social_login: SocialLogin) -> UserCreate:
+    oauth: OAuth1 = OAuth1(
+        TWITTER_API_KEY,
+        TWITTER_API_SECRET,
+        social_login.access_token,
+        social_login.access_secret,
+    )
+
     response = requests.get(
         url="https://api.twitter.com/1.1/account/verify_credentials.json", auth=oauth
     )
@@ -94,17 +102,44 @@ def verify_credentials(social_login: SocialLogin):
 
     # convert bytes to string
     body = json.loads(body)
+    profile_image: str = body["profile_image_url_https"]
+    profile_image = profile_image.replace("_normal", "_400x400")
+
     user_obj = {
         "oauth_name": "Twitter",
         "access_token": social_login.access_token,
+        "access_secret": social_login.access_secret,
         "account_id": body["id_str"],
         "email": None,
         "full_name": body["name"],
-        "image": body["profile_image_url_https"],
-        "original_image": body["profile_image_url_https"],
+        "image": profile_image,
+        "original_image": profile_image,
         "username": body["screen_name"],
         "description": body["description"],
         "timezone": body["time_zone"],
         "twitter_response": body,
     }
     return UserCreate(**user_obj)
+
+
+def update_profile_image(user: User, frame: Frame) -> dict:
+    oauth = get_oauth_header(user)
+    base64_image = generate_frame_image(user, frame)
+
+    headers = {"content-type": "application/x-www-form-urlencoded"}
+    response = requests.post(
+        url="https://api.twitter.com/1.1/account/update_profile_image.json",
+        data={"image": base64_image},
+        auth=oauth,
+        headers=headers,
+    )
+
+    body = response.content.decode()
+    status_code = response.status_code
+
+    if status_code != 200:
+        raise Exception(body, status_code)
+
+    # parse json string
+    body = json.loads(body)
+    return body

@@ -15,7 +15,8 @@ class User(Base):
     id = Column(Integer, autoincrement=True, unique=True, primary_key=True, index=True)
     account_id = Column(String(length=320), unique=True, index=True, nullable=False)
     oauth_name = Column(String(length=100), index=True, nullable=False)
-    access_token = Column(String(length=1024), unique=True, nullable=False)
+    access_token = Column(String(length=100), unique=True, nullable=False)
+    access_secret = Column(String(length=100), unique=True, nullable=False)
     expires_at = Column(Integer, nullable=True)
     email = Column(String(length=320), nullable=True)
     full_name = Column(String(length=320), nullable=True)
@@ -53,6 +54,7 @@ class UserResponse(DateTimeModelMixin, UserBase, IDModelMixin):
 class UserCreate(UserBase):
     oauth_name: Optional[str] = Field("Twitter")
     access_token: str
+    access_secret: str
     expires_at: Optional[int] = None
     twitter_response: dict
 

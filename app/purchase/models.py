@@ -41,9 +41,16 @@ class PurchaseBase(TweetFrameBase):
     remaining_frame_usage: int
     remaining_active_schedules: int
     start_date: date
-    end_date: date
-    start_time: str
-    end_time: str
+    end_date: Optional[date]
+    start_time: Optional[str]
+    end_time: Optional[str]
+    amount_paid: float
+    currency: str
+    payment_id: str
+    payment_status: Optional[str]
+    payment_method: Optional[str]
+    billing_address: Optional[str]
+    shipping_address: Optional[str]
 
 
 class PurchaseResponse(DateTimeModelMixin, PurchaseBase, IDModelMixin):
@@ -51,7 +58,8 @@ class PurchaseResponse(DateTimeModelMixin, PurchaseBase, IDModelMixin):
 
 
 class PurchaseCreate(PurchaseBase):
-    pass
+    user_id: int
+    plan_id: int
 
 
 class PurchaseCreateResponse(DateTimeModelMixin, PurchaseCreate, IDModelMixin):
@@ -68,6 +76,9 @@ class PurchaseUpdate(PurchaseBase):
     start_time: Optional[str]
     end_time: Optional[str]
     is_active: Optional[bool]
+    amount_paid: Optional[float]
+    currency: Optional[str]
+    payment_id: Optional[str]
 
 
 class PurchaseUpdateResponse(DateTimeModelMixin, PurchaseUpdate, IDModelMixin):
