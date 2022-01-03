@@ -23,7 +23,7 @@ class PurchaseRepository(BaseRepository):
     def set_free_plan(self, user: User) -> Purchase:
         plan_repo = PlanRepository(self.session)
 
-        plan = plan_repo.get_plan_by_name(name="Free")
+        plan = plan_repo.get_free_plan()
         if plan is None:
             raise Exception("Plan not found")
 
