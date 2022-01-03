@@ -37,7 +37,7 @@ async def verify_twitter_token(
     # get the request secret from database for the given request token
     social_login_repo = SocialLoginRepository(db)
     social_login = social_login_repo.get_by_access_token(user.access_token)
-
+    print(social_login)
     user_create: UserCreate = twitter_service.verify_credentials(social_login)
 
     user = user_service.refresh_user_profile(db, user, user_create)

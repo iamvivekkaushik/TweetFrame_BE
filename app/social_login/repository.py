@@ -21,4 +21,4 @@ class SocialLoginRepository(BaseRepository):
         query: Query = self.session.query(self.model).filter(
             self.model.access_token == access_token
         )
-        return query.one()
+        return query.first()
