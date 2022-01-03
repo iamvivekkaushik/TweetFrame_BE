@@ -7,16 +7,16 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./db:/var/lib/postgresql/data
     logging:
       driver: none
     environment:
       - POSTGRES_HOST=db
-      - POSTGRES_DB=tweetframes
+      - POSTGRES_DB=admin
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=password
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tweetframes"]
+      test: ["CMD-SHELL", "pg_isready -U admin"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -26,10 +26,8 @@ services:
       context: .
       dockerfile: ./dev.Dockerfile
     volumes:
-      - .:/code
+      - .:/app
     env_file: .env
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     ports:
       - "8000:8000"
     depends_on:
