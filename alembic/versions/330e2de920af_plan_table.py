@@ -7,8 +7,6 @@ Create Date: 2021-12-28 22:31:32.583738
 """
 from alembic import op
 import sqlalchemy as sa
-import fastapi_users
-import fastapi_users_db_sqlalchemy
 from app.enums import *
 import sqlalchemy_utils
 

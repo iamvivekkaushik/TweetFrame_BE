@@ -29,8 +29,8 @@ def get_all_purchases(
 
 @purchase_router.get("/active", response_model=PurchaseResponse)
 def get_active_purchase(
-        db: Session = Depends(get_db),
-        user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
     """Get current active purchase for the user."""
     purchase_repo = PurchaseRepository(session=db)

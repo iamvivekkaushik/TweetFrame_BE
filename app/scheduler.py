@@ -5,6 +5,7 @@ from pytz import utc
 from sqlalchemy.orm import Session
 
 from app.config import DATABASE_URL
+
 # AP Scheduler config
 from app.database.core import get_db
 from app.schedule.job_handler import handle_schedule

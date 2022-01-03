@@ -13,7 +13,7 @@ from app.user.models import User
 
 
 def handle_schedule(*args, **kwargs):
-    schedule_id = kwargs['schedule_id']
+    schedule_id = kwargs["schedule_id"]
 
     # Get all the New, Unfinished or running jobs
     db: Session = next(get_db())
@@ -69,10 +69,10 @@ def handle_schedule(*args, **kwargs):
     update_profile_image(user=user, frame=frame)
 
     remaining_frames -= 1
-    purchase_repo.update(object_id=purchase.id, obj_in=PurchaseUpdate(
-        remaining_frame_usage=remaining_frames
-    ))
+    purchase_repo.update(
+        object_id=purchase.id,
+        obj_in=PurchaseUpdate(remaining_frame_usage=remaining_frames),
+    )
     update_schedule_status(
-        schedule_repo, schedule, ScheduleStatus.COMPLETED,
-        message="Frame Set."
+        schedule_repo, schedule, ScheduleStatus.COMPLETED, message="Frame Set."
     )

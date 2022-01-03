@@ -16,8 +16,9 @@ class ScheduleRepository(BaseRepository):
         query = self.session.query(Schedule).filter(
             or_(
                 self.model.status == ScheduleStatus.CREATED.value,
-                self.model.status == ScheduleStatus.IN_PROGRESS.value
+                self.model.status == ScheduleStatus.IN_PROGRESS.value,
             ),
-            self.model.is_active == true())
+            self.model.is_active == true(),
+        )
 
         return query.all()
