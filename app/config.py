@@ -1,45 +1,36 @@
 import logging
 import os
-from typing import List
 
 from databases import DatabaseURL
-from starlette.config import Config
-from starlette.datastructures import CommaSeparatedStrings, Secret
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
 
 log = logging.getLogger(__name__)
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-config = Config(".env")
-
 # Project Configurations
-PROJECT_NAME: str = config("PROJECT_NAME", default="TweetFrames")
-API_PREFIX = "/api/v1"
-JWT_TOKEN_PREFIX = "Token"
-VERSION = "0.0.0"
-ALLOWED_HOSTS: List[str] = config(
-    "ALLOWED_HOSTS",
-    cast=CommaSeparatedStrings,
-    default="",
-)
-ENVIRONMENT: str = config("ENVIRONMENT", default="development")
-DOMAIN: str = config("DOMAIN", default="localhost")
-SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret, default="04adb9c164713d2f1694820596")
-DEBUG: bool = config("DEBUG", cast=bool, default=False)
+PROJECT_NAME: str = os.environ.get("PROJECT_NAME", default="TweetFrames")
+API_PREFIX: str = os.environ.get("API_PREFIX", default="/api/v1")
+JWT_TOKEN_PREFIX: str = os.environ.get("JWT_TOKEN_PREFIX", default="Bearer")
+VERSION: str = os.environ.get("VERSION", default="0.0.0")
 
-RESET_PASSWORD_TOKEN_SECRET: Secret = config("RESET_PASSWORD_TOKEN_SECRET", cast=Secret)
-VERIFICATION_TOKEN_SECRET: Secret = config("VERIFICATION_TOKEN_SECRET", cast=Secret)
+ALLOWED_HOSTS: str = os.environ.get(
+    "ALLOWED_HOSTS",
+    default="*"
+)
+ENVIRONMENT: str = os.environ.get("ENVIRONMENT", default="development")
+DOMAIN: str = os.environ.get("DOMAIN", default="localhost")
+SECRET_KEY: str = os.environ.get("SECRET_KEY")
+DEBUG: bool = os.environ.get("DEBUG", default=True)
 
 # logging configuration
 LOGGING_LEVEL = logging.DEBUG if DEBUG else logging.INFO
 LOGGERS = ("uvicorn.asgi", "uvicorn.access")
 
-
 # Database
-DATABASE_URL: DatabaseURL = config("DB_CONNECTION", cast=DatabaseURL)
-MAX_CONNECTIONS_COUNT: int = config("MAX_CONNECTIONS_COUNT", cast=int, default=10)
-MIN_CONNECTIONS_COUNT: int = config("MIN_CONNECTIONS_COUNT", cast=int, default=10)
+DATABASE_URL: DatabaseURL = DatabaseURL(os.environ.get("DB_CONNECTION"))
 
 # Twitter API Keys
-TWITTER_API_KEY: str = config("TWITTER_API_KEY")
-TWITTER_API_SECRET: str = config("TWITTER_API_SECRET")
+TWITTER_API_KEY: str = os.environ.get("TWITTER_API_KEY")
+TWITTER_API_SECRET: str = os.environ.get("TWITTER_API_SECRET")
