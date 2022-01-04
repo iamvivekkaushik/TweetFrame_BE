@@ -1,0 +1,35 @@
+name: Docker
+
+on:
+  push:
+    # Publish `master` as Docker `latest` image.
+    branches:
+      - main
+
+    # Publish `v1.2.3` tags as releases.
+    # tags:
+    #   - v*
+
+  # Run tests for any PRs.
+  pull_request:
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: noliran/branch-based-secrets@v1
+        with:
+          secrets: DEPLOYMENT_IP
+      - id: deploy
+        name: Deploy to dokku
+        uses: idoberko2/dokku-deploy-github-action@v1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          dokku-host: "152.67.11.63"
+          app-name: "twitpro"
+          git-push-flags: "--force"
