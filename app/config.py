@@ -24,7 +24,7 @@ ALLOWED_HOSTS: List[str] = config(
 )
 ENVIRONMENT: str = config("ENVIRONMENT", default="development")
 DOMAIN: str = config("DOMAIN", default="localhost")
-SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret)
+SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret, default="04adb9c164713d2f1694820596")
 DEBUG: bool = config("DEBUG", cast=bool, default=False)
 
 RESET_PASSWORD_TOKEN_SECRET: Secret = config("RESET_PASSWORD_TOKEN_SECRET", cast=Secret)
@@ -41,7 +41,5 @@ MAX_CONNECTIONS_COUNT: int = config("MAX_CONNECTIONS_COUNT", cast=int, default=1
 MIN_CONNECTIONS_COUNT: int = config("MIN_CONNECTIONS_COUNT", cast=int, default=10)
 
 # Twitter API Keys
-TWITTER_API_KEY: str = config("TWITTER_API_KEY", default="")
-TWITTER_API_SECRET: str = config("TWITTER_API_SECRET", default="")
-TWITTER_ACCESS_TOKEN: str = config("TWITTER_ACCESS_TOKEN", default="")
-TWITTER_ACCESS_TOKEN_SECRET: str = config("TWITTER_ACCESS_TOKEN_SECRET", default="")
+TWITTER_API_KEY: str = config("TWITTER_API_KEY")
+TWITTER_API_SECRET: str = config("TWITTER_API_SECRET")
