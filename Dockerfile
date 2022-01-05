@@ -21,7 +21,7 @@ RUN python3 -m pip install -r requirements.txt
 COPY . .
 
 RUN mkdir media
-RUN alembic upgrade head
+#RUN alembic upgrade head
 
 EXPOSE 8000
 

@@ -1,36 +1,39 @@
 import logging
 import os
+from typing import List
 
 from databases import DatabaseURL
-from dotenv import load_dotenv, find_dotenv
-
-load_dotenv(find_dotenv())
+from starlette.config import Config
+from starlette.datastructures import CommaSeparatedStrings, Secret
 
 log = logging.getLogger(__name__)
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Project Configurations
-PROJECT_NAME: str = os.environ.get("PROJECT_NAME", default="TweetFrames")
-API_PREFIX: str = os.environ.get("API_PREFIX", default="/api/v1")
-JWT_TOKEN_PREFIX: str = os.environ.get("JWT_TOKEN_PREFIX", default="Bearer")
-VERSION: str = os.environ.get("VERSION", default="0.0.0")
+config = Config(".env")
 
-ALLOWED_HOSTS: str = os.environ.get(
+# Project Configurations
+PROJECT_NAME: str = config("PROJECT_NAME", default="TweetFrames")
+API_PREFIX = "/api/v1"
+JWT_TOKEN_PREFIX = "Token"
+VERSION = "0.0.0"
+ALLOWED_HOSTS: List[str] = config(
     "ALLOWED_HOSTS",
-    default="*"
+    cast=CommaSeparatedStrings,
+    default="",
 )
-ENVIRONMENT: str = os.environ.get("ENVIRONMENT", default="development")
-DOMAIN: str = os.environ.get("DOMAIN", default="localhost")
-SECRET_KEY: str = os.environ.get("SECRET_KEY")
-DEBUG: bool = os.environ.get("DEBUG", default=True)
+ENVIRONMENT: str = config("ENVIRONMENT", default="development")
+DOMAIN: str = config("DOMAIN", default="localhost")
+SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret)
+DEBUG: bool = config("DEBUG", cast=bool, default=False)
 
 # logging configuration
 LOGGING_LEVEL = logging.DEBUG if DEBUG else logging.INFO
 LOGGERS = ("uvicorn.asgi", "uvicorn.access")
 
 # Database
-DATABASE_URL: DatabaseURL = DatabaseURL(os.environ.get("DB_CONNECTION"))
+DATABASE_URL: DatabaseURL = config("DB_CONNECTION", cast=DatabaseURL)
 
 # Twitter API Keys
-TWITTER_API_KEY: str = os.environ.get("TWITTER_API_KEY")
-TWITTER_API_SECRET: str = os.environ.get("TWITTER_API_SECRET")
+TWITTER_API_KEY: str = config("TWITTER_API_KEY")
+TWITTER_API_SECRET: str = config("TWITTER_API_SECRET")
