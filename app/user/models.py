@@ -59,7 +59,14 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(UserBase):
-    pass
+    account_id: Optional[str]
+    email: Optional[str]
+    full_name: Optional[str]
+    image: Optional[str]
+    original_image: Optional[str]
+    username: Optional[str]
+    description: Optional[str]
+    timezone: Optional[str]
 
 
 class UserDB(UserBase):
