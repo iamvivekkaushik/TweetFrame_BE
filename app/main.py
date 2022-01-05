@@ -11,7 +11,7 @@ from app.api import router as api_router
 from app.config import BASE_DIR
 from app.database.core import database, get_db
 from app.events import app_startup_event_handler, app_stop_event_handler
-from app.scheduler import init_scheduler
+# from app.scheduler import init_scheduler
 
 app = FastAPI(title=config.PROJECT_NAME, debug=config.DEBUG, version=config.VERSION)
 
@@ -64,7 +64,7 @@ app.mount(
 )
 
 # Start the scheduler
-init_scheduler()
+# init_scheduler()
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
