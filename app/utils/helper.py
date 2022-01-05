@@ -15,9 +15,14 @@ def generate_frame_image(user: User, frame: Frame) -> str:
     Returns the base 64 encoded image
     """
     background_url = user.original_image
-    frame_url = os.path.join(config.BASE_DIR, frame.url)
+    # frame_url = os.path.join(config.BASE_DIR, frame.url)
+    frame_url = frame.url
 
-    frame_image = Image.open(frame_url, "r")
+    if not background_url:
+        raise Exception("User doesn't have an image to use as background")
+
+    response = requests.get(frame_url)
+    frame_image = Image.open(BytesIO(response.content))
     frame_image = frame_image.convert("RGBA")
 
     frame_w, frame_h = frame_image.size

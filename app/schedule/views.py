@@ -13,11 +13,8 @@ from app.schedule.job_handler import handle_schedule
 from app.schedule.models import (
     ScheduleResponse,
     ScheduleCreate,
-    ScheduleUpdateResponse,
-    ScheduleUpdate,
 )
 from app.schedule.repository import ScheduleRepository
-from app.scheduler import scheduler
 from app.user.jwt import get_current_user
 from app.user.models import User
 
@@ -81,13 +78,7 @@ def create_schedule(
         data.user_id = user.id
         schedule = schedule_repo.create(data)
 
-        scheduler.add_job(
-            func=handle_schedule,
-            kwargs={"schedule_id": schedule.id},
-            max_instances=1,
-            id=str(schedule.id),
-            replace_existing=True,
-        )
+        handle_schedule(schedule_id=schedule.id)
 
         remaining_active_schedules -= 1
         purchase_repo.update(
@@ -105,18 +96,18 @@ def create_schedule(
         )
 
 
-@schedule_router.patch("/{schedule_id}", response_model=ScheduleUpdateResponse)
-def update_schedule(
-    schedule_id: int,
-    schedule_in: ScheduleUpdate,
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-):
-    """Handle request to update a Schedule."""
-    schedule_in.user_id = user.id
-
-    schedule_repo = ScheduleRepository(session=db)
-    schedule = schedule_repo.update(
-        object_id=schedule_id, obj_in=schedule_in, user=user
-    )
-    return schedule
+# @schedule_router.patch("/{schedule_id}", response_model=ScheduleUpdateResponse)
+# def update_schedule(
+#     schedule_id: int,
+#     schedule_in: ScheduleUpdate,
+#     db: Session = Depends(get_db),
+#     user: User = Depends(get_current_user),
+# ):
+#     """Handle request to update a Schedule."""
+#     schedule_in.user_id = user.id
+#
+#     schedule_repo = ScheduleRepository(session=db)
+#     schedule = schedule_repo.update(
+#         object_id=schedule_id, obj_in=schedule_in, user=user
+#     )
+#     return schedule

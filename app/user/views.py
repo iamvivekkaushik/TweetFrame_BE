@@ -28,7 +28,7 @@ def get_user_profile(user: User = Depends(get_current_user)):
     response_model=UserResponse,
     status_code=status.HTTP_200_OK,
 )
-async def verify_twitter_token(
+async def refresh_profile(
     db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
     """
@@ -37,7 +37,6 @@ async def verify_twitter_token(
     # get the request secret from database for the given request token
     social_login_repo = SocialLoginRepository(db)
     social_login = social_login_repo.get_by_access_token(user.access_token)
-    print(social_login)
     user_create: UserCreate = twitter_service.verify_credentials(social_login)
 
     user = user_service.refresh_user_profile(db, user, user_create)
