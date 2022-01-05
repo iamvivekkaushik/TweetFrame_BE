@@ -37,3 +37,9 @@ DATABASE_URL: DatabaseURL = config("DB_CONNECTION", cast=DatabaseURL)
 # Twitter API Keys
 TWITTER_API_KEY: str = config("TWITTER_API_KEY")
 TWITTER_API_SECRET: str = config("TWITTER_API_SECRET")
+
+# Backblaze B2
+B2_BUCKET_NAME: str = config("B2_BUCKET_NAME")
+B2_KEY_ID: str = config("B2_KEY_ID")
+B2_APP_KEY: str = config("B2_APP_KEY")
+B2_ENDPOINT: str = config("B2_ENDPOINT")

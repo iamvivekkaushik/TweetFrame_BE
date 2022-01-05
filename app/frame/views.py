@@ -14,6 +14,7 @@ from app.purchase.models import PurchaseUpdate
 from app.purchase.repository import PurchaseRepository
 from app.user.jwt import get_current_user
 from app.user.models import User
+from app.utils import b2_helper
 
 frame_router = APIRouter()
 
@@ -55,6 +56,7 @@ async def create_frame(
     Create a new frame.
     """
     try:
+        file_size = frame_service.validate_file(frame)
         purchase_repo = PurchaseRepository(db)
         purchase: Purchase = purchase_repo.get_active_purchase(user)
 
@@ -71,9 +73,8 @@ async def create_frame(
                 detail="No more custom frames allowed. Please Upgrade your plan.",
             )
 
-        frame_service.validate_file(frame)
-        # save the frame to /media/frames/
-        file_path = frame_service.save_image(frame)
+        # save the frame to backblaze
+        file_path = b2_helper.upload_frame(db, frame, file_size)
 
         if not user.is_superuser:
             frame_type = FrameType.CUSTOM
@@ -120,9 +121,10 @@ async def update_frame(
     Create a new frame.
     """
     try:
-        frame_service.validate_file(frame)
-        # save the frame to /media/frames/
-        file_path = frame_service.save_image(frame)
+        file_size = frame_service.validate_file(frame)
+
+        # save the frame to backblaze
+        file_path = b2_helper.upload_frame(db, frame, file_size)
 
         if not user.is_superuser:
             frame_type = FrameType.CUSTOM

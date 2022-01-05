@@ -1,10 +1,6 @@
 import os.path
-from pathlib import Path
 
 from fastapi import UploadFile, HTTPException, status
-
-from PIL import ImageFile
-import shutil
 
 from app import config
 
@@ -22,7 +18,7 @@ def create_image_url(path: str) -> str:
     return protocol + config.DOMAIN + "/" + path
 
 
-def validate_file(frame: UploadFile):
+def validate_file(frame: UploadFile) -> int:
     # convert 300 kb into bytes
     max_allowed_size = 300 * 1024
 
@@ -39,22 +35,5 @@ def validate_file(frame: UploadFile):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File size must be less than 300KB.",
         )
-
-
-def save_image(frame: UploadFile, path: str = "media/frames"):
-    """
-    Save image to file
-    """
-    media_folder = os.path.join(config.BASE_DIR, path)
-    if not os.path.exists(media_folder):
-        os.makedirs(media_folder)
-
-    file = frame.file
-    file_name = frame.filename
-    frame_path = Path(os.path.join(media_folder, file_name))
-
-    with frame_path.open("wb") as buffer:
-        shutil.copyfileobj(file, buffer)
-
-    frame.file.close()
-    return path + "/" + file_name
+    file.seek(0, os.SEEK_SET)
+    return file_size
