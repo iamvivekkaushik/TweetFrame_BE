@@ -4,3 +4,4 @@ from app.plan.models import Plan
 from app.purchase.models import Purchase
 from app.frame.models import Frame
 from app.schedule.models import Schedule
+from app.file.models import File
