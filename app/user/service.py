@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.config import SECRET_KEY
 from app.user.jwt import generate_jwt, VERIFY_USER_TOKEN_AUDIENCE
-from app.user.models import UserCreate, User
+from app.user.models import UserCreate, User, UserUpdate
 from app.user.repository import UserRepository
 
 
@@ -15,9 +15,10 @@ def login_create_user(db: Session, user_create: UserCreate):
 
         print("USER FOUND")
         # user found
-        user_create.original_image = None
-        user_create.image = None
-        user = user_repo.update(object_id=user.id, obj_in=user_create)
+        user_update = UserUpdate(**user_create.dict())
+        user_update.original_image = None
+        user_update.image = None
+        user = user_repo.update(object_id=user.id, obj_in=user_update)
         token = generate_token(user)
         return token, user
     except NoResultFound as e:
