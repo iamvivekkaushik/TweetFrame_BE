@@ -41,6 +41,10 @@ class SocialLoginUpdate(SocialLoginCreate):
     request_secret: Optional[str]
 
 
+class RequestTokenCreate(TweetFrameBase):
+    oauth_callback: str
+
+
 class RequestTokenResponse(TweetFrameBase):
     request_token: str
     auth_url: str

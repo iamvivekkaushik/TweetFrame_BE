@@ -20,8 +20,7 @@ class UserRepository(BaseRepository):
         Get user by username
         """
         query: Query = self.session.query(self.model).filter(
-            self.model.username == username,
-            self.model.is_active == true()
+            self.model.username == username, self.model.is_active == true()
         )
         return query.one()
 

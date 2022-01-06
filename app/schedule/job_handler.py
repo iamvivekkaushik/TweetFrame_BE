@@ -1,4 +1,3 @@
-from apscheduler.job import Job
 from sqlalchemy.orm import Session
 
 from app.database.core import get_db
@@ -86,7 +85,10 @@ def handle_schedule(**kwargs):
             obj_in=PurchaseUpdate(remaining_frame_usage=remaining_frames),
         )
         update_schedule_status(
-            schedule_repo, schedule, ScheduleStatus.COMPLETED, message="Frame Set.",
+            schedule_repo,
+            schedule,
+            ScheduleStatus.COMPLETED,
+            message="Frame Set.",
         )
     except Exception as e:
         update_schedule_status(

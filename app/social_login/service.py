@@ -13,8 +13,10 @@ from app.twitter import service as twitter_service
 from app.user import service as user_service
 
 
-def generate_request_token(db: Session) -> SocialLogin:
-    social_object: SocialLoginCreate = twitter_service.generate_request_token()
+def generate_request_token(db: Session, oauth_callback: str) -> SocialLogin:
+    social_object: SocialLoginCreate = twitter_service.generate_request_token(
+        oauth_callback
+    )
     social_login_repo = SocialLoginRepository(session=db)
     social_login = social_login_repo.create(social_object)
     return social_login

@@ -5,7 +5,8 @@ from requests_oauthlib import OAuth1
 
 from app.config import TWITTER_API_KEY, TWITTER_API_SECRET
 from app.frame.models import Frame
-from app.social_login.models import SocialLogin, SocialLoginCreate, SocialLoginUpdate
+from app.social_login.models import SocialLogin, SocialLoginCreate, \
+    SocialLoginUpdate
 from app.user.models import UserCreate, User
 from app.utils.helper import generate_frame_image
 
@@ -21,12 +22,14 @@ def get_oauth_header(user: User) -> OAuth1:
     return oauth
 
 
-def generate_request_token() -> SocialLoginCreate:
+def generate_request_token(oauth_callback: str) -> SocialLoginCreate:
     # obtain request token
     oauth = OAuth1(TWITTER_API_KEY, TWITTER_API_SECRET)
 
     response = requests.post(
-        url="https://api.twitter.com/oauth/request_token", auth=oauth
+        url="https://api.twitter.com/oauth/request_token",
+        data={"oauth_callback": oauth_callback},
+        auth=oauth,
     )
     body = response.content.decode()
     status_code = response.status_code
