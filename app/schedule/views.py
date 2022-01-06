@@ -57,43 +57,37 @@ def create_schedule(
     user: User = Depends(get_current_user),
 ):
     """Handle request to create a new Schedule."""
-    try:
-        purchase_repo = PurchaseRepository(db)
-        purchase: Purchase = purchase_repo.get_active_purchase(user)
+    purchase_repo = PurchaseRepository(db)
+    purchase: Purchase = purchase_repo.get_active_purchase(user)
 
-        if not purchase:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="No active purchase found for user",
-            )
-
-        remaining_active_schedules = purchase.remaining_active_schedules
-        if not user.is_superuser and remaining_active_schedules <= 0:
-            raise HTTPException(
-                status_code=status.HTTP_402_PAYMENT_REQUIRED,
-                detail="Active schedules limit reached. Please Upgrade your plan.",
-            )
-
-        schedule_repo = ScheduleRepository(session=db)
-        data.user_id = user.id
-        schedule = schedule_repo.create(data)
-
-        handle_schedule(schedule_id=schedule.id)
-
-        remaining_active_schedules -= 1
-        purchase_repo.update(
-            object_id=purchase.id,
-            obj_in=PurchaseUpdate(
-                remaining_active_schedules=remaining_active_schedules
-            ),
-        )
-        return schedule
-    except Exception as e:
-        print(e)
+    if not purchase:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e),
+            detail="No active purchase found for user",
         )
+
+    remaining_active_schedules = purchase.remaining_active_schedules
+    if not user.is_superuser and remaining_active_schedules <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail="Active schedules limit reached. Please Upgrade your plan.",
+        )
+
+    schedule_repo = ScheduleRepository(session=db)
+    data.user_id = user.id
+    schedule = schedule_repo.create(data)
+
+    handle_schedule(schedule_id=schedule.id)
+
+    remaining_active_schedules -= 1
+    purchase_repo.update(
+        object_id=purchase.id,
+        obj_in=PurchaseUpdate(
+            remaining_active_schedules=remaining_active_schedules
+        ),
+    )
+    return schedule
+
 
 
 # @schedule_router.patch("/{schedule_id}", response_model=ScheduleUpdateResponse)

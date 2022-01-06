@@ -1,4 +1,5 @@
 from fastapi import Query
+from sqlalchemy import true
 from sqlalchemy.orm import Session
 
 from app.database.repository import BaseRepository
@@ -19,7 +20,8 @@ class UserRepository(BaseRepository):
         Get user by username
         """
         query: Query = self.session.query(self.model).filter(
-            self.model.username == username
+            self.model.username == username,
+            self.model.is_active == true()
         )
         return query.one()
 

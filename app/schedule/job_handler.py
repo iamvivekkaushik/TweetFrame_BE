@@ -22,12 +22,12 @@ def handle_schedule(**kwargs):
     schedule: Schedule = schedule_repo.get(schedule_id)
     user: User = schedule.created_by
 
-    if schedule.is_active is False:
+    if not schedule:
         update_schedule_status(
             schedule_repo,
             schedule,
             ScheduleStatus.FAILED,
-            message="Schedule was not active",
+            message="Schedule not found",
         )
         return
 
@@ -86,7 +86,7 @@ def handle_schedule(**kwargs):
             obj_in=PurchaseUpdate(remaining_frame_usage=remaining_frames),
         )
         update_schedule_status(
-            schedule_repo, schedule, ScheduleStatus.COMPLETED, message="Frame Set."
+            schedule_repo, schedule, ScheduleStatus.COMPLETED, message="Frame Set.",
         )
     except Exception as e:
         update_schedule_status(

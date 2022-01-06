@@ -25,9 +25,9 @@ class PlanRepository(BaseRepository):
             plan_create = PlanCreate(
                 name="Free",
                 price=0,
-                max_frame_usage=50,
-                max_custom_frames=3,
-                max_active_schedules=2,
+                max_frame_usage=100,
+                max_custom_frames=10,
+                max_active_schedules=100,
             )
             return self.create(object_in=plan_create)
 

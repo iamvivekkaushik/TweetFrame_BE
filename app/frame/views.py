@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, Form, UploadFile, File, Depends, HTTPException
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -14,6 +15,7 @@ from app.purchase.models import PurchaseUpdate
 from app.purchase.repository import PurchaseRepository
 from app.user.jwt import get_current_user
 from app.user.models import User
+from app.user.repository import UserRepository
 from app.utils import b2_helper
 
 frame_router = APIRouter()
@@ -32,8 +34,7 @@ async def get_frames(db: Session = Depends(get_db)):
     try:
         frame_repo = FrameRepository(db)
         frames = frame_repo.get_all_frames()
-        for frame in frames:
-            frame.url = frame_service.create_image_url(frame.url)
+
         return frames
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -144,3 +145,27 @@ async def update_frame(
     finally:
         if hasattr(frame, "file"):
             frame.file.close()
+
+
+@frame_router.get(
+    "/public/{username}",
+    response_model=List[FrameResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def get_public_frames(username: str, db: Session = Depends(get_db)):
+    """
+    Get all public frames by a user.
+    """
+    try:
+        user_repo = UserRepository(db)
+        user: User = user_repo.get_by_username(username)
+
+        frame_repo = FrameRepository(db)
+        frames = frame_repo.get_all_frames(user=user)
+
+        return frames
+    except NoResultFound as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with provided username not found.",
+        )
