@@ -1,6 +1,6 @@
 from typing import TypeVar, List, Dict, Any, Union
 
-from fastapi import Query, HTTPException
+from fastapi import Query, HTTPException, status
 from loguru import logger
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -67,12 +67,8 @@ class BaseRepository:
         *,
         object_id: int,
         obj_in: Union[UpdateSchemaType, Dict[str, Any]],
-        user: User = None,
     ) -> ModelType:
         db_obj = self.get(object_id)
-
-        if user and user.id != db_obj.user_id:
-            raise HTTPException("User does not have permission to update this object.")
 
         obj_data = db_obj.__dict__
 
@@ -83,7 +79,7 @@ class BaseRepository:
 
         for field in obj_data:
             if field in update_data:
-                logger.debug(field, update_data[field])
+                # logger.debug(field, update_data[field])
                 setattr(db_obj, field, update_data[field])
 
         self.session.add(db_obj)

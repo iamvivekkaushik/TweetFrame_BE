@@ -3,8 +3,7 @@ from typing import Optional
 from sqlalchemy import Column, Integer, String, Text
 
 from app.database.core import Base
-from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, \
-    DateTimeModelMixin
+from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelMixin
 
 
 # SQLAlchemy Model

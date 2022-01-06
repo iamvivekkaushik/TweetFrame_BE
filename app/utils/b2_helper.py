@@ -34,8 +34,13 @@ def upload_file(db, file: UploadFile, path: str, file_size: int) -> str:
     file_url = B2_ENDPOINT + file_path
 
     file_repo = FileRepository(db)
-    file_create = FileCreate(name=file_name, url=file_url, path=file_path,
-                             size=file_size, mimetype=content_type)
+    file_create = FileCreate(
+        name=file_name,
+        url=file_url,
+        path=file_path,
+        size=file_size,
+        mimetype=content_type,
+    )
 
     file_repo.create(file_create)
 

@@ -14,6 +14,15 @@ class UserRepository(BaseRepository):
     def __init__(self, session: Session) -> None:
         super().__init__(session=session, model=User, model_base=UserBase)
 
+    def get_by_username(self, username) -> User:
+        """
+        Get user by username
+        """
+        query: Query = self.session.query(self.model).filter(
+            self.model.username == username
+        )
+        return query.one()
+
     def get_by_oauth_account(self, account_id) -> User:
         """
         Get user by oauth account id

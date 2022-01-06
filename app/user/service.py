@@ -1,3 +1,4 @@
+from loguru import logger
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
@@ -8,6 +9,7 @@ from app.user.repository import UserRepository
 
 
 def login_create_user(db: Session, user_create: UserCreate):
+    print("Login Create User")
     user_repo = UserRepository(db)
     account_id = user_create.account_id
     try:
@@ -15,9 +17,7 @@ def login_create_user(db: Session, user_create: UserCreate):
 
         print("USER FOUND")
         # user found
-        user_update = UserUpdate(**user_create.dict())
-        user_update.original_image = None
-        user_update.image = None
+        user_update = UserUpdate(**user_create.dict(exclude={"original_image"}))
         user = user_repo.update(object_id=user.id, obj_in=user_update)
         token = generate_token(user)
         return token, user
