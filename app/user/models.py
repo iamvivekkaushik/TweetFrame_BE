@@ -50,6 +50,14 @@ class UserResponse(DateTimeModelMixin, UserBase, IDModelMixin):
     pass
 
 
+class UserPublicResponse(TweetFrameBase):
+    full_name: Optional[str]
+    image: Optional[str]
+    original_image: Optional[str]
+    username: str
+    description: Optional[str]
+
+
 class UserCreate(UserBase):
     oauth_name: Optional[str] = Field("Twitter")
     access_token: str

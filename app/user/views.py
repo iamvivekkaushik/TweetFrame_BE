@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.database.core import get_db
@@ -6,9 +7,31 @@ from app.social_login.repository import SocialLoginRepository
 from app.twitter import service as twitter_service
 from app.user import service as user_service
 from app.user.jwt import get_current_user
-from app.user.models import User, UserResponse, UserCreate
+from app.user.models import User, UserResponse, UserCreate, UserPublicResponse
+from app.user.repository import UserRepository
 
 user_router = APIRouter()
+
+
+@user_router.get(
+    "/public/{username}",
+    response_model=UserPublicResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_user_profile(username: str, db: Session = Depends(get_db)):
+    """
+    Get the user profile
+    """
+    try:
+        user_repository = UserRepository(db)
+
+        user = user_repository.get_by_username(username)
+        return user
+    except NoResultFound as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User Account Doesn't exist or inactive",
+        )
 
 
 @user_router.get(
