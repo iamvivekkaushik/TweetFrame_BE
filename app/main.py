@@ -1,5 +1,6 @@
 import os.path
 
+import sentry_sdk
 import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -11,7 +12,9 @@ from app.api import router as api_router
 from app.config import BASE_DIR
 from app.database.core import database, get_db
 from app.events import app_startup_event_handler, app_stop_event_handler
-from app.scheduler import init_scheduler
+from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+
+# from app.scheduler import init_scheduler
 
 app = FastAPI(title=config.PROJECT_NAME, debug=config.DEBUG, version=config.VERSION)
 
@@ -63,8 +66,28 @@ app.mount(
     "/media", StaticFiles(directory=os.path.join(BASE_DIR, "media")), name="media"
 )
 
+# init sentry
+sentry_sdk.init(
+    "https://9baa1c73c77d40e9baddcb6f40886b6a@o1130193.ingest.sentry.io/6174148",
+    environment=config.ENVIRONMENT,
+    release=config.VERSION,
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+)
+
+try:
+    app.add_middleware(SentryAsgiMiddleware)
+except Exception:
+    print("Sentry is not installed")
+    # pass silently if the Sentry integration failed
+    pass
+
+
 # Start the scheduler
-init_scheduler()
+# init_scheduler()
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
