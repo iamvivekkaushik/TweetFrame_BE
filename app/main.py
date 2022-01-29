@@ -12,7 +12,6 @@ from app.api import router as api_router
 from app.config import BASE_DIR
 from app.database.core import database, get_db
 from app.events import app_startup_event_handler, app_stop_event_handler
-from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
 # from app.scheduler import init_scheduler
 
@@ -43,10 +42,14 @@ async def db_session_middleware(request: Request, call_next):
     try:
         request.state.db = next(get_db())
         response = await call_next(request)
+        return response
+    except Exception as e:
+        with sentry_sdk.push_scope() as scope:
+            scope.set_context("request", {"request": request})
+            sentry_sdk.capture_exception(e)
+        raise e
     finally:
         request.state.db.close()
-
-    return response
 
 
 # here we start/stop connection to the database as the app starts or stops
@@ -71,20 +74,11 @@ sentry_sdk.init(
     "https://9baa1c73c77d40e9baddcb6f40886b6a@o1130193.ingest.sentry.io/6174148",
     environment=config.ENVIRONMENT,
     release=config.VERSION,
-
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0,
 )
-
-try:
-    app.add_middleware(SentryAsgiMiddleware)
-except Exception:
-    print("Sentry is not installed")
-    # pass silently if the Sentry integration failed
-    pass
-
 
 # Start the scheduler
 # init_scheduler()
