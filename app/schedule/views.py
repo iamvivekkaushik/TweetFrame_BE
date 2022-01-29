@@ -84,7 +84,9 @@ def create_schedule(
         remaining_active_schedules -= 1
         purchase_repo.update(
             object_id=purchase.id,
-            obj_in=PurchaseUpdate(remaining_active_schedules=remaining_active_schedules),
+            obj_in=PurchaseUpdate(
+                remaining_active_schedules=remaining_active_schedules
+            ),
         )
         return schedule
     except IntegrityError as e:

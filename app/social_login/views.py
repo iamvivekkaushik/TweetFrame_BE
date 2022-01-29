@@ -77,4 +77,3 @@ async def verify_twitter_token(body: AccessTokenCreate, db: Session = Depends(ge
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         )
-
