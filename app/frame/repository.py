@@ -15,6 +15,21 @@ class FrameRepository(BaseRepository):
     def __init__(self, session: Session) -> None:
         super().__init__(session=session, model=Frame, model_base=FrameBase)
 
+    def get_by_category(self, category_id=None, sub_category_id=None) -> List[Frame]:
+        """Returns all the available objects for a user."""
+        query: Query = self.session.query(self.model).filter(
+            self.model.is_public == true(),
+            self.model.is_active == true(),
+        )
+
+        if category_id:
+            query = query.filter(self.model.category_id == category_id)
+
+        if sub_category_id:
+            query = query.filter(self.model.sub_category_id == sub_category_id)
+
+        return query.all()
+
     def get_all_frames(
         self, user: User = None, type: FrameType = None, skip=0, limit=100
     ) -> List[Frame]:

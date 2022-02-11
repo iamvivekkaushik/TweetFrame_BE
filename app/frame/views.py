@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Form, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, Form, UploadFile, File, Depends, HTTPException, Query
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 from starlette import status
@@ -26,13 +26,15 @@ frame_router = APIRouter()
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(get_current_user)],
 )
-async def get_frames(db: Session = Depends(get_db)):
+async def get_frames(
+    category_id=Query(None), sub_category_id=Query(None), db: Session = Depends(get_db)
+):
     """
     Get all frames.
     """
     try:
         frame_repo = FrameRepository(db)
-        frames = frame_repo.get_all_frames()
+        frames = frame_repo.get_by_category(category_id, sub_category_id)
 
         return frames
     except Exception as e:
