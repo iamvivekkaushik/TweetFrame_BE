@@ -48,6 +48,8 @@ async def create_frame(
     schedule_type: ScheduleType = Form(...),
     settings: dict = Form({}),
     is_public: bool = Form(...),
+    category_id: int = Form(...),
+    sub_category_id: int = Form(...),
     frame: UploadFile = File(...),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
@@ -87,6 +89,8 @@ async def create_frame(
             settings=settings,
             is_public=is_public,
             user_id=user.id,
+            category_id=category_id,
+            sub_category_id=sub_category_id,
         )
 
         frame_repo = FrameRepository(db)
@@ -155,6 +159,10 @@ async def update_frame(
         frame_repo = FrameRepository(db)
         frame = frame_repo.update(object_id=frame_id, obj_in=frame_update)
         return frame
+    except NoResultFound:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Frame not found"
+        )
     finally:
         if hasattr(frame, "file"):
             frame.file.close()

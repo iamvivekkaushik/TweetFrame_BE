@@ -9,7 +9,7 @@ from app.utils import b2_helper
 
 
 def login_create_user(db: Session, user_create: UserCreate):
-    print("Login Create User")
+    print("Inside Login Create User")
     user_repo = UserRepository(db)
     account_id = user_create.account_id
     try:
@@ -37,14 +37,12 @@ def login_create_user(db: Session, user_create: UserCreate):
         print("User not found, creating ...")
         print("=======================")
         # User doesn't exist, create it
-        user_data = user_create.dict()
         image_url = b2_helper.upload_image_from_url(
             db=db, url=user_create.image, path="user_profile"
         )
-        user_data["original_image"] = image_url
-        print(user_data)
+        user_create.original_image = image_url
 
-        user = user_repo.create(**user_data)
+        user = user_repo.create(user_create)
         token = generate_token(user)
         return token, user
 

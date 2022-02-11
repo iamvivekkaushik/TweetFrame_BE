@@ -8,9 +8,10 @@ from starlette import status
 from app.database.core import get_db
 from app.purchase.models import (
     PurchaseResponse,
+    PurchaseUpdate,
 )
 from app.purchase.repository import PurchaseRepository
-from app.user.jwt import get_current_user
+from app.user.jwt import get_current_user, get_current_superuser
 from app.user.models import User
 
 purchase_router = APIRouter()
@@ -63,7 +64,7 @@ def get_purchase(
 
 
 @purchase_router.post("/freePlan", response_model=PurchaseResponse)
-def create_purchase(
+def set_free_plan(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
@@ -79,3 +80,23 @@ def create_purchase(
 
     purchase = purchase_repo.set_free_plan(user=user)
     return purchase
+
+
+@purchase_router.patch(
+    "/{purchase_id}",
+    response_model=PurchaseResponse,
+    dependencies=[Depends(get_current_superuser)],
+)
+def update_purchase(
+    purchase_id: int, purchase_in: PurchaseUpdate, db: Session = Depends(get_db)
+):
+    """Update a Purchase."""
+    try:
+        purchase_repo = PurchaseRepository(db)
+        purchase = purchase_repo.update(object_id=purchase_id, obj_in=purchase_in)
+        return purchase
+    except NoResultFound:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid purchase id.",
+        )

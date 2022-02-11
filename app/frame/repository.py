@@ -37,15 +37,15 @@ class FrameRepository(BaseRepository):
         """Creates a new object."""
         frame: Frame = super().create(object_in)
 
-        for tag in object_in.tags_list:
-            self.session.add(
-                AssocTagFrames(
-                    frame_id=frame.id,
-                    tag_id=tag,
-                )
-            )
-
-        # Create and entry in associated table
-        self.session.commit()
+        # for tag in object_in.tags_list:
+        #     self.session.add(
+        #         AssocTagFrames(
+        #             frame_id=frame.id,
+        #             tag_id=tag,
+        #         )
+        #     )
+        #
+        # # Create and entry in associated table
+        # self.session.commit()
 
         return frame
