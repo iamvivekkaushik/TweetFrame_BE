@@ -8,7 +8,6 @@ from starlette import status
 from app import Purchase
 from app.database.core import get_db
 from app.enums import ScheduleType, FrameType
-from app.frame import service as frame_service
 from app.frame.models import FrameResponse, FrameCreate, FrameUpdate
 from app.frame.repository import FrameRepository
 from app.purchase.models import PurchaseUpdate
@@ -16,7 +15,7 @@ from app.purchase.repository import PurchaseRepository
 from app.user.jwt import get_current_user
 from app.user.models import User
 from app.user.repository import UserRepository
-from app.utils import b2_helper
+from app.utils import b2_helper, helper
 
 frame_router = APIRouter()
 
@@ -57,7 +56,7 @@ async def create_frame(
     Create a new frame.
     """
     try:
-        file_size = frame_service.validate_file(frame)
+        file_size = helper.validate_file(frame)
         purchase_repo = PurchaseRepository(db)
         purchase: Purchase = purchase_repo.get_active_purchase(user)
 
@@ -112,18 +111,21 @@ async def update_frame(
     name: str = Form(None),
     frame_type: FrameType = Form(None),
     schedule_type: ScheduleType = Form(None),
+    settings: dict = Form(None),
     is_public: bool = Form(None),
     frame: UploadFile = File(None),
+    category_id: int = Form(None),
+    sub_category_id: int = Form(None),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
     """
-    Create a new frame.
+    Update a frame.
     """
     try:
         file_path = None
         if frame:
-            file_size = frame_service.validate_file(frame)
+            file_size = helper.validate_file(frame)
 
             # save the frame to backblaze
             file_path = b2_helper.upload_frame(db, frame, file_size)
@@ -134,16 +136,21 @@ async def update_frame(
         frame_data = {
             "name": name,
             "url": file_path,
-            "type":frame_type.value,
-            "schedule_type": schedule_type.value,
             "is_public": is_public,
+            "category_id": category_id,
+            "sub_category_id": sub_category_id,
         }
 
-        for key, value in frame_data.items():
+        if frame_type:
+            frame_data["type"] = frame_type.value
+        if schedule_type:
+            frame_data["schedule_type"] = schedule_type.value
+
+        for key, value in dict(frame_data).items():
             if value is None:
                 del frame_data[key]
 
-        frame_update = FrameUpdate(frame_data)
+        frame_update = FrameUpdate(**frame_data)
 
         frame_repo = FrameRepository(db)
         frame = frame_repo.update(object_id=frame_id, obj_in=frame_update)

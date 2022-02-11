@@ -48,7 +48,7 @@ def generate_token(user: User) -> str:
     token = generate_jwt(
         token_data,
         SECRET_KEY,
-        36000,
+        360000,
     )
     return token
 

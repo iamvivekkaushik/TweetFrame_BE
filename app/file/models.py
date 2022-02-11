@@ -36,7 +36,7 @@ class FileCreateResponse(DateTimeModelMixin, FileBase, IDModelMixin):
     pass
 
 
-class PlanUpdate(FileBase):
+class FileUpdate(FileBase):
     name: Optional[str]
     url: Optional[str]
     path: Optional[str]

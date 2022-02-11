@@ -1,6 +1,6 @@
 from typing import TypeVar, List, Dict, Any, Union
 
-from fastapi import Query, HTTPException, status
+from fastapi import Query
 from loguru import logger
 from pydantic import BaseModel
 from sqlalchemy.orm import Session

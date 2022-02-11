@@ -1,14 +1,14 @@
 from typing import List
 
 from fastapi import Query
+from sqlalchemy import true
 from sqlalchemy.orm import Session
 
-from sqlalchemy import true
-
-from app.enums import FrameType
-from app.user.models import User
-from app.frame.models import Frame, FrameBase
+from app.associative_tables.models import AssocTagFrames
 from app.database.repository import BaseRepository
+from app.enums import FrameType
+from app.frame.models import Frame, FrameBase, FrameCreate
+from app.user.models import User
 
 
 class FrameRepository(BaseRepository):
@@ -32,3 +32,20 @@ class FrameRepository(BaseRepository):
 
         query = query.offset(skip).limit(limit)
         return query.all()
+
+    def create(self, object_in: FrameCreate) -> Frame:
+        """Creates a new object."""
+        frame: Frame = super().create(object_in)
+
+        for tag in object_in.tags_list:
+            self.session.add(
+                AssocTagFrames(
+                    frame_id=frame.id,
+                    tag_id=tag,
+                )
+            )
+
+        # Create and entry in associated table
+        self.session.commit()
+
+        return frame

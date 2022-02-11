@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import Column, Text, Boolean, Integer, ForeignKey
 from sqlalchemy.orm import relationship
@@ -10,6 +10,9 @@ from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelM
 
 
 # SQLAlchemy Model
+from app.tag.models import TagBase
+
+
 class Frame(BaseIdMixin, Base):
     name = Column(Text(), nullable=False)
     url = Column(URLType(), nullable=False)
@@ -22,7 +25,14 @@ class Frame(BaseIdMixin, Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     created_by = relationship("User", back_populates="frames")
 
+    category_id = Column(Integer, ForeignKey("category.id"))
+    category = relationship("Category", back_populates="frames")
+
+    sub_category_id = Column(Integer, ForeignKey("sub_category.id"))
+    sub_category = relationship("SubCategory", back_populates="frames")
+
     schedules = relationship("Schedule", back_populates="frame")
+    # tags = relationship("AssocTagFrames", back_populates="frames")
 
 
 # Pydantic models...
@@ -33,14 +43,19 @@ class FrameBase(TweetFrameBase):
     schedule_type: str
     settings: Optional[dict]
     is_public: bool
+    category_id: int
+    sub_category_id: int
 
 
 class FrameResponse(DateTimeModelMixin, FrameBase, IDModelMixin):
-    pass
+    category_id: Optional[int]
+    sub_category_id: Optional[int]
+    tags: Optional[List[TagBase]]
 
 
 class FrameCreate(FrameBase):
     user_id: Optional[int]
+    tags_list: Optional[List[int]]
 
 
 class FrameCreateResponse(DateTimeModelMixin, FrameCreate, IDModelMixin):
@@ -55,6 +70,8 @@ class FrameUpdate(FrameBase):
     settings: Optional[dict]
     is_public: Optional[bool]
     is_active: Optional[bool]
+    category_id: Optional[int]
+    sub_category_id: Optional[int]
 
 
 class FrameUpdateResponse(DateTimeModelMixin, FrameUpdate, IDModelMixin):
