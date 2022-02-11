@@ -112,7 +112,6 @@ async def update_frame(
     name: str = Form(None),
     frame_type: FrameType = Form(None),
     schedule_type: ScheduleType = Form(None),
-    settings: dict = Form(None),
     is_public: bool = Form(None),
     frame: UploadFile = File(None),
     db: Session = Depends(get_db),
@@ -122,22 +121,29 @@ async def update_frame(
     Create a new frame.
     """
     try:
-        file_size = frame_service.validate_file(frame)
+        file_path = None
+        if frame:
+            file_size = frame_service.validate_file(frame)
 
-        # save the frame to backblaze
-        file_path = b2_helper.upload_frame(db, frame, file_size)
+            # save the frame to backblaze
+            file_path = b2_helper.upload_frame(db, frame, file_size)
 
         if not user.is_superuser:
             frame_type = FrameType.CUSTOM
 
-        frame_update = FrameUpdate(
-            name=name,
-            url=file_path,
-            type=frame_type.value,
-            schedule_type=schedule_type.value,
-            settings=settings,
-            is_public=is_public,
-        )
+        frame_data = {
+            "name": name,
+            "url": file_path,
+            "type":frame_type.value,
+            "schedule_type": schedule_type.value,
+            "is_public": is_public,
+        }
+
+        for key, value in frame_data.items():
+            if value is None:
+                del frame_data[key]
+
+        frame_update = FrameUpdate(frame_data)
 
         frame_repo = FrameRepository(db)
         frame = frame_repo.update(object_id=frame_id, obj_in=frame_update)
