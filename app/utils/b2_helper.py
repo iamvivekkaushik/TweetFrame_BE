@@ -1,5 +1,8 @@
 import time
+from io import BytesIO
 
+import requests
+from PIL import Image
 from b2sdk.v2 import B2Api, InMemoryAccountInfo
 from fastapi import UploadFile
 
@@ -31,6 +34,7 @@ def upload_file(db, file: UploadFile, path: str, file_size: int) -> str:
         file_name=file_path,
         content_type=file.content_type,
     )
+
     file_url = B2_ENDPOINT + file_path
 
     file_repo = FileRepository(db)
@@ -44,6 +48,42 @@ def upload_file(db, file: UploadFile, path: str, file_size: int) -> str:
 
     file_repo.create(file_create)
 
+    return file_url
+
+
+def upload_image_from_url(db, url: str, path: str, file_size: int = 300) -> str:
+    response = requests.get(url)
+    img = Image.open(BytesIO(response.content))
+    img = img.convert("RGBA")
+
+    buffered = BytesIO()
+    img.convert("RGB").save(buffered, format="jpeg", quality=100)
+
+    file_path = create_unique_file_name(path, "jpeg")
+    file_name = file_path.split("/")[-1]
+
+    # content_type = image.format
+    content_type = "image/jpeg"
+    # read bytes from pil image
+    data = buffered.getvalue()
+    bucket.upload_bytes(
+        data_bytes=data,
+        file_name=file_path,
+        content_type=content_type,
+    )
+
+    file_url = B2_ENDPOINT + file_path
+
+    file_repo = FileRepository(db)
+    file_create = FileCreate(
+        name=file_name,
+        url=file_url,
+        path=file_path,
+        size=file_size,
+        mimetype=content_type,
+    )
+
+    file_repo.create(file_create)
     return file_url
 
 

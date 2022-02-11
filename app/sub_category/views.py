@@ -23,7 +23,9 @@ sub_category_router = APIRouter()
     response_model=List[SubCategoryResponse],
     status_code=status.HTTP_200_OK,
 )
-async def get_sub_categories_by_id(category_id: Optional[int] = Query(None), db: Session = Depends(get_db)):
+async def get_sub_categories_by_id(
+    category_id: Optional[int] = Query(None), db: Session = Depends(get_db)
+):
     """
     Get all sub categories.
     """

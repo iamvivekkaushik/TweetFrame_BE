@@ -17,5 +17,7 @@ router.include_router(plan_router, prefix="/plan", tags=["plan"])
 router.include_router(schedule_router, prefix="/schedule", tags=["schedule"])
 router.include_router(purchase_router, prefix="/purchase", tags=["purchase"])
 router.include_router(category_router, prefix="/category", tags=["category"])
-router.include_router(sub_category_router, prefix="/sub_category", tags=["sub_category"])
+router.include_router(
+    sub_category_router, prefix="/sub_category", tags=["sub_category"]
+)
 router.include_router(frame_router, prefix="/frame", tags=["frame"])

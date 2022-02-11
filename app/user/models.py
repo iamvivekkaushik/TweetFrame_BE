@@ -19,8 +19,10 @@ class User(Base):
     expires_at = Column(Integer, nullable=True)
     email = Column(String(length=320), nullable=True)
     full_name = Column(String(length=320), nullable=True)
-    image = Column(Text, nullable=True)
-    original_image = Column(Text, nullable=True)
+    image = Column(Text, nullable=True)  # This will be updated on every login
+    original_image = Column(
+        Text, nullable=True
+    )  # This will contain our copy of original image
     username = Column(String(length=150), unique=True, nullable=False)
     description = Column(Text, nullable=True)
     timezone = Column(String(length=100), nullable=True)

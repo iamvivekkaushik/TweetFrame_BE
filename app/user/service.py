@@ -1,4 +1,3 @@
-from loguru import logger
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
@@ -6,6 +5,7 @@ from app.config import SECRET_KEY
 from app.user.jwt import generate_jwt, VERIFY_USER_TOKEN_AUDIENCE
 from app.user.models import UserCreate, User, UserUpdate
 from app.user.repository import UserRepository
+from app.utils import b2_helper
 
 
 def login_create_user(db: Session, user_create: UserCreate):
@@ -16,8 +16,19 @@ def login_create_user(db: Session, user_create: UserCreate):
         user = user_repo.get_by_oauth_account(account_id)
 
         print("USER FOUND")
+        user_data = user_create.dict(exclude={"original_image"})
+
+        # Check if user's image needs to be updated
+        if user_create.image != user.image:
+            # newly received image is not the same as the one in the db
+            # that means image was update from twitter directly
+            image_url = b2_helper.upload_image_from_url(
+                db=db, url=user_create.image, path="user_profile"
+            )
+            user_data["original_image"] = image_url
+
         # user found
-        user_update = UserUpdate(**user_create.dict(exclude={"original_image"}))
+        user_update = UserUpdate(**user_data)
         user = user_repo.update(object_id=user.id, obj_in=user_update)
         token = generate_token(user)
         return token, user
@@ -26,7 +37,14 @@ def login_create_user(db: Session, user_create: UserCreate):
         print("User not found, creating ...")
         print("=======================")
         # User doesn't exist, create it
-        user = user_repo.create(user_create)
+        user_data = user_create.dict()
+        image_url = b2_helper.upload_image_from_url(
+            db=db, url=user_create.image, path="user_profile"
+        )
+        user_data["original_image"] = image_url
+        print(user_data)
+
+        user = user_repo.create(**user_data)
         token = generate_token(user)
         return token, user
 

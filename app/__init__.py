@@ -9,4 +9,5 @@ from app.schedule.models import Schedule
 from app.file.models import File
 
 from app.tag.models import Tag
+
 # from app.associative_tables.models import AssocTagFrames

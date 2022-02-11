@@ -1,19 +1,15 @@
 import base64
 import os
+import os.path
 from io import BytesIO
 
-from PIL import Image
-
 import requests
-from app import config
-from app.frame.models import Frame
-from app.user.models import User
-
-import os.path
-
+from PIL import Image
 from fastapi import UploadFile, HTTPException, status
 
 from app import config
+from app.frame.models import Frame
+from app.user.models import User
 
 
 def create_image_url(path: str) -> str:
