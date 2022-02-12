@@ -24,7 +24,6 @@ frame_router = APIRouter()
     "",
     response_model=List[FrameResponse],
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(get_current_user)],
 )
 async def get_frames(
     category_id=Query(None), sub_category_id=Query(None), db: Session = Depends(get_db)
