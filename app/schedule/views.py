@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from starlette import status
 
+from sentry_sdk import capture_exception
 from app import Purchase
 from app.database.core import get_db
 from app.purchase.models import PurchaseUpdate
@@ -90,7 +91,11 @@ def create_schedule(
         # )
         return schedule
     except IntegrityError as e:
+
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"message": "Invalid data received", "error": str(e)},
         )
+    except Exception as e:
+        capture_exception(e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
