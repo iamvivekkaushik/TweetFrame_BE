@@ -38,7 +38,6 @@ class User(Base):
 
 # Pydantic models...
 class UserBase(TweetFrameBase):
-    account_id: str
     email: Optional[str]
     full_name: Optional[str]
     image: Optional[str]
@@ -49,7 +48,7 @@ class UserBase(TweetFrameBase):
 
 
 class UserResponse(DateTimeModelMixin, UserBase, IDModelMixin):
-    pass
+    account_id: str
 
 
 class UserPublicResponse(TweetFrameBase):
@@ -61,6 +60,7 @@ class UserPublicResponse(TweetFrameBase):
 
 
 class UserCreate(UserBase):
+    account_id: str
     oauth_name: Optional[str] = Field("Twitter")
     access_token: str
     access_secret: str
@@ -79,5 +79,10 @@ class UserUpdate(UserBase):
     timezone: Optional[str]
 
 
+class UserSuperAdminUpdate(TweetFrameBase):
+    is_superuser: Optional[bool]
+
+
 class UserDB(UserBase):
+    account_id: str
     twitter_response: dict
