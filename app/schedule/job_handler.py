@@ -34,30 +34,30 @@ def handle_schedule(**kwargs):
         # Update Schedule Status
         update_schedule_status(schedule_repo, schedule, ScheduleStatus.IN_PROGRESS)
 
-        purchase_repo = PurchaseRepository(db)
-        purchase: Purchase = purchase_repo.get_active_purchase(user)
+        # purchase_repo = PurchaseRepository(db)
+        # purchase: Purchase = purchase_repo.get_active_purchase(user)
+        #
+        # if not purchase or purchase.is_active is False:
+        #     # Update Schedule Status
+        #     update_schedule_status(
+        #         schedule_repo,
+        #         schedule,
+        #         ScheduleStatus.FAILED,
+        #         message="No active purchase found",
+        #     )
+        #     return
 
-        if not purchase or purchase.is_active is False:
+        # remaining_frames = purchase.remaining_frame_usage
+
+        # if remaining_frames <= 0:
             # Update Schedule Status
-            update_schedule_status(
-                schedule_repo,
-                schedule,
-                ScheduleStatus.FAILED,
-                message="No active purchase found",
-            )
-            return
-
-        remaining_frames = purchase.remaining_frame_usage
-
-        if remaining_frames <= 0:
-            # Update Schedule Status
-            update_schedule_status(
-                schedule_repo,
-                schedule,
-                ScheduleStatus.FAILED,
-                message="No remaining frames.",
-            )
-            return
+            # update_schedule_status(
+            #     schedule_repo,
+            #     schedule,
+            #     ScheduleStatus.FAILED,
+            #     message="No remaining frames.",
+            # )
+            # return
 
         frame = schedule.frame
         if not frame or frame.is_active is False:
@@ -79,11 +79,11 @@ def handle_schedule(**kwargs):
             object_id=user.id, obj_in=UserUpdate(image=profile_image)
         )
 
-        remaining_frames -= 1
-        purchase_repo.update(
-            object_id=purchase.id,
-            obj_in=PurchaseUpdate(remaining_frame_usage=remaining_frames),
-        )
+        # remaining_frames -= 1
+        # purchase_repo.update(
+        #     object_id=purchase.id,
+        #     obj_in=PurchaseUpdate(remaining_frame_usage=remaining_frames),
+        # )
         update_schedule_status(
             schedule_repo,
             schedule,
