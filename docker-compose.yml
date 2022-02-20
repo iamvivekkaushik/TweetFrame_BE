@@ -1,19 +1,18 @@
 version: "3.9"
 
 services:
-  db:
+  postgres:
     image: postgres
     restart: always
     ports:
       - "5432:5432"
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - ./postgres-data:/var/lib/postgresql/data
     logging:
       driver: none
     environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_DB=admin
-      - POSTGRES_USER=admin
+      - POSTGRES_DB=twitpro
+      - POSTGRES_USER=vivek
       - POSTGRES_PASSWORD=password
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin"]
@@ -24,12 +23,27 @@ services:
   backend:
     build:
       context: .
-      dockerfile: ./dev.Dockerfile
+      dockerfile: ./Dockerfile.dev
     volumes:
       - .:/app
     env_file: .env
     ports:
       - "8000:8000"
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
+
+  pgweb:
+    container_name: pgweb
+    restart: always
+    image: sosedoff/pgweb
+    ports: 
+      - "8081:8081"
+    logging:
+      driver: none
+    links: 
+      - postgres:postgres  # my database container is called postgres, not db
+    environment:
+      - DATABASE_URL=postgresql://vivek:password@postgres/twitpro?sslmode=disable
+    depends_on:
+      - backend

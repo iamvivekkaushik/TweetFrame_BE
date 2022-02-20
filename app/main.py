@@ -65,9 +65,9 @@ app.include_router(api_router, prefix=config.API_PREFIX)
 
 
 # For media files
-app.mount(
-    "/media", StaticFiles(directory=os.path.join(BASE_DIR, "media")), name="media"
-)
+# app.mount(
+#     "/media", StaticFiles(directory=os.path.join(BASE_DIR, "media")), name="media"
+# )
 
 # init sentry
 sentry_sdk.init(
