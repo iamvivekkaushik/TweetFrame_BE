@@ -11,9 +11,9 @@ services:
     logging:
       driver: none
     environment:
-      - POSTGRES_DB=twitpro
       - POSTGRES_USER=vivek
       - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=twitpro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin"]
       interval: 5s
@@ -29,21 +29,23 @@ services:
     env_file: .env
     ports:
       - "8000:8000"
+    links:
+      - postgres:postgres
     depends_on:
       postgres:
         condition: service_healthy
 
-  pgweb:
-    container_name: pgweb
-    restart: always
-    image: sosedoff/pgweb
-    ports: 
-      - "8081:8081"
-    logging:
-      driver: none
-    links: 
-      - postgres:postgres  # my database container is called postgres, not db
-    environment:
-      - DATABASE_URL=postgresql://vivek:password@postgres/twitpro?sslmode=disable
-    depends_on:
-      - backend
+#  pgweb:
+#    container_name: pgweb
+#    restart: always
+#    image: sosedoff/pgweb
+#    ports:
+#      - "8081:8081"
+#    logging:
+#      driver: none
+#    links:
+#      - postgres:postgres  # my database container is called postgres, not db
+#    environment:
+#      - DATABASE_URL=postgresql://vivek:password@postgres/twitpro?sslmode=disable
+#    depends_on:
+#      - backend

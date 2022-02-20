@@ -1,5 +1,4 @@
-# syntax=docker/dockerfile:1
-FROM python:3.8-alpine
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8-alpine3.10
 
 # Create app directory
 WORKDIR /app
@@ -20,10 +19,8 @@ RUN python3 -m pip install -r requirements.txt
 
 COPY . .
 
-RUN mkdir media
-#RUN alembic upgrade head
-
-EXPOSE 8000
+# RUN mkdir media
+# RUN alembic upgrade head
 
 # start command
 CMD [ "uvicorn", "app.main:app", "--host=0.0.0.0"]

@@ -1,2 +1,4 @@
-echo "-- Running Alembic Migrate --"
+# Let the DB start
+sleep 10;
+# Run migrations
 alembic upgrade head
