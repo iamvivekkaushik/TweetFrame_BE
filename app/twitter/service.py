@@ -6,8 +6,7 @@ from requests_oauthlib import OAuth1
 
 from app.config import TWITTER_API_KEY, TWITTER_API_SECRET
 from app.frame.models import Frame
-from app.social_login.models import SocialLogin, SocialLoginCreate, \
-    SocialLoginUpdate
+from app.social_login.models import SocialLogin, SocialLoginCreate, SocialLoginUpdate
 from app.user.models import UserCreate, User
 from app.utils.helper import generate_frame_image
 

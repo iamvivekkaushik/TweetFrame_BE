@@ -70,6 +70,8 @@ class UserCreate(UserBase):
 
 class UserUpdate(UserBase):
     account_id: Optional[str]
+    access_token: Optional[str]
+    access_secret: Optional[str]
     email: Optional[str]
     full_name: Optional[str]
     image: Optional[str]
