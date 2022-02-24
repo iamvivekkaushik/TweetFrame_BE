@@ -7,8 +7,13 @@ from app.social_login.repository import SocialLoginRepository
 from app.twitter import service as twitter_service
 from app.user import service as user_service
 from app.user.jwt import get_current_user
-from app.user.models import User, UserResponse, UserCreate, UserPublicResponse, \
-    UserSuperAdminUpdate
+from app.user.models import (
+    User,
+    UserResponse,
+    UserCreate,
+    UserPublicResponse,
+    UserSuperAdminUpdate,
+)
 from app.user.repository import UserRepository
 
 user_router = APIRouter()
@@ -72,9 +77,7 @@ async def refresh_profile(
     response_model=UserResponse,
     status_code=status.HTTP_200_OK,
 )
-async def refresh_profile(
-    db: Session = Depends(get_db)
-):
+async def refresh_profile(db: Session = Depends(get_db)):
     """
     Verify the oauth token and verifier
     """

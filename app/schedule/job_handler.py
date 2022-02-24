@@ -50,14 +50,14 @@ def handle_schedule(**kwargs):
         # remaining_frames = purchase.remaining_frame_usage
 
         # if remaining_frames <= 0:
-            # Update Schedule Status
-            # update_schedule_status(
-            #     schedule_repo,
-            #     schedule,
-            #     ScheduleStatus.FAILED,
-            #     message="No remaining frames.",
-            # )
-            # return
+        # Update Schedule Status
+        # update_schedule_status(
+        #     schedule_repo,
+        #     schedule,
+        #     ScheduleStatus.FAILED,
+        #     message="No remaining frames.",
+        # )
+        # return
 
         frame = schedule.frame
         if not frame or frame.is_active is False:
