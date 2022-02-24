@@ -1,11 +1,13 @@
 import json
 
 import requests
+import sentry_sdk
 from requests_oauthlib import OAuth1
 
 from app.config import TWITTER_API_KEY, TWITTER_API_SECRET
 from app.frame.models import Frame
-from app.social_login.models import SocialLogin, SocialLoginCreate, SocialLoginUpdate
+from app.social_login.models import SocialLogin, SocialLoginCreate, \
+    SocialLoginUpdate
 from app.user.models import UserCreate, User
 from app.utils.helper import generate_frame_image
 
@@ -140,6 +142,8 @@ def update_profile_image(user: User, frame: Frame) -> dict:
     status_code = response.status_code
 
     if status_code != 200:
+        print(body)
+        sentry_sdk.capture_exception(Exception(body, status_code))
         raise Exception(body, status_code)
 
     # parse json string

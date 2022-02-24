@@ -27,7 +27,7 @@ class SubCategoryBase(TweetFrameBase):
 
 
 class SubCategoryResponse(DateTimeModelMixin, SubCategoryBase, IDModelMixin):
-    pass
+    category_id: int
 
 
 class SubCategoryCreate(SubCategoryBase):
