@@ -12,6 +12,12 @@ def convert_datetime_to_real_world(dt: datetime) -> str:
 class BaseIdMixin(object):
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
 
+    def filterable_fields():
+        return []
+    
+    def searchable_fields():
+        return []
+
 
 # Pydantic model...
 class IDModelMixin(BaseModel):

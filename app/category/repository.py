@@ -1,5 +1,6 @@
 from typing import Union, Dict, Any
 
+from fastapi import Query
 from sqlalchemy.orm import Session
 
 from app.category.models import Category, CategoryBase, CategoryUpdate
@@ -10,6 +11,11 @@ from app.file.repository import FileRepository
 class CategoryRepository(BaseRepository):
     def __init__(self, session: Session) -> None:
         super().__init__(session=session, model=Category, model_base=CategoryBase)
+
+    def get_by_slug(self, category_slug: str) -> Category:
+        query: Query = self.session.query(self.model)
+        query = query.filter(self.model.slug == category_slug)
+        return query.first()
 
     def update(
         self, *, object_id: int, obj_in: Union[CategoryUpdate, Dict[str, Any]]

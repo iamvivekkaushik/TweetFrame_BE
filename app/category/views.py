@@ -45,6 +45,7 @@ async def get_categories(db: Session = Depends(get_db)):
 )
 async def create_category(
     name: str = Form(...),
+    slug: str = Form(...),
     icon: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
@@ -61,6 +62,7 @@ async def create_category(
 
         category_create: CategoryCreate = CategoryCreate(
             name=name,
+            slug=slug,
             icon=file_path,
         )
 
@@ -82,6 +84,7 @@ async def create_category(
 async def update_sub_category(
     category_id: int,
     name: Optional[str] = Form(None),
+    slug: Optional[str] = Form(None),
     icon: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
 ):
@@ -98,7 +101,7 @@ async def update_sub_category(
                 db=db, file=icon, path="category", file_size=file_size
             )
 
-        category_update = CategoryUpdate(name=name, icon=file_path)
+        category_update = CategoryUpdate(name=name, slug=slug, icon=file_path)
 
         category_repo = CategoryRepository(db)
         category = category_repo.update(object_id=category_id, obj_in=category_update)

@@ -6,12 +6,14 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from app import Purchase
+from app.category.repository import CategoryRepository
 from app.database.core import get_db
 from app.enums import ScheduleType, FrameType
 from app.frame.models import FrameResponse, FrameCreate, FrameUpdate
 from app.frame.repository import FrameRepository
 from app.purchase.models import PurchaseUpdate
 from app.purchase.repository import PurchaseRepository
+from app.sub_category.repository import SubCategoryRepository
 from app.user.jwt import get_current_user
 from app.user.models import User
 from app.user.repository import UserRepository
@@ -26,12 +28,23 @@ frame_router = APIRouter()
     status_code=status.HTTP_200_OK,
 )
 async def get_frames(
-    category_id=Query(None), sub_category_id=Query(None), db: Session = Depends(get_db)
+    category_slug: str = Query(None),
+    sub_category_slug: str = Query(None),
+    category_id: int = Query(None),
+    sub_category_id: int = Query(None),
+    db: Session = Depends(get_db),
 ):
     """
     Get all frames.
     """
     try:
+        if category_slug:
+            category_repo = CategoryRepository(db)
+            category_id = category_repo.get_by_slug(category_slug).id
+        if sub_category_slug:
+            sub_category_repo = SubCategoryRepository(db)
+            sub_category_id = sub_category_repo.get_by_slug(sub_category_slug).id
+
         frame_repo = FrameRepository(db)
         frames = frame_repo.get_by_category(category_id, sub_category_id)
 

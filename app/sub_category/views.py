@@ -23,7 +23,7 @@ sub_category_router = APIRouter()
     response_model=List[SubCategoryResponse],
     status_code=status.HTTP_200_OK,
 )
-async def get_sub_categories_by_id(
+async def get_sub_categories_by_cateogry(
     category_id: Optional[int] = Query(None), db: Session = Depends(get_db)
 ):
     """
@@ -51,6 +51,7 @@ async def get_sub_categories_by_id(
 )
 async def create_sub_category(
     name: str = Form(...),
+    slug: str = Form(...),
     category_id: int = Form(...),
     icon: UploadFile = File(...),
     db: Session = Depends(get_db),
@@ -68,6 +69,7 @@ async def create_sub_category(
 
         sub_category_create: SubCategoryCreate = SubCategoryCreate(
             name=name,
+            slug=slug,
             icon=file_path,
             category_id=category_id,
         )
@@ -90,6 +92,7 @@ async def create_sub_category(
 async def update_sub_category(
     sub_category_id: int,
     name: Optional[str] = Form(None),
+    slug: Optional[str] = Form(None),
     icon: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
 ):
@@ -106,7 +109,7 @@ async def update_sub_category(
                 db=db, file=icon, path="sub_category", file_size=file_size
             )
 
-        sub_category_update = SubCategoryUpdate(name=name, icon=file_path)
+        sub_category_update = SubCategoryUpdate(name=name, slug=slug, icon=file_path)
 
         sub_category_repo = SubCategoryRepository(db)
         sub_category = sub_category_repo.update(

@@ -11,6 +11,7 @@ from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelM
 # SQLAlchemy Model
 class SubCategory(BaseIdMixin, Base):
     name = Column(String(255), nullable=False)
+    slug = Column(String(255), nullable=True)
     icon = Column(URLType(), nullable=False)
 
     # Relationship
@@ -24,6 +25,7 @@ class SubCategory(BaseIdMixin, Base):
 class SubCategoryBase(TweetFrameBase):
     name: str
     icon: str
+    slug: str
 
 
 class SubCategoryResponse(DateTimeModelMixin, SubCategoryBase, IDModelMixin):

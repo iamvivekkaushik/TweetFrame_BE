@@ -29,6 +29,9 @@ class BaseRepository:
     def session(self) -> Session:
         return self._session
 
+    def get_query(self) -> Query:
+        return self.session.query(self.model)
+
     def get_all(self, user: User = None, skip=0, limit=100) -> List[ModelType]:
         """Returns all the available objects for a user."""
         query: Query = self.session.query(self.model)

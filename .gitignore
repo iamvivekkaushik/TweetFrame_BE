@@ -113,3 +113,4 @@ postgres-data
 # data
 media
 data
+.DS_Store

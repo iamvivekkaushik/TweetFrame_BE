@@ -3,12 +3,15 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.database.core import get_db
+from app.database.service import common_parameters, search_filter_sort_paginate
 from app.social_login.repository import SocialLoginRepository
 from app.twitter import service as twitter_service
 from app.user import service as user_service
-from app.user.jwt import get_current_user
+from app.user.jwt import get_current_superuser, get_current_user
 from app.user.models import (
     User,
+    UserDashboardResponse,
+    UserPaginate,
     UserResponse,
     UserCreate,
     UserPublicResponse,
@@ -17,6 +20,36 @@ from app.user.models import (
 from app.user.repository import UserRepository
 
 user_router = APIRouter()
+
+
+@user_router.get(
+    "",
+    response_model=UserPaginate,
+    status_code=status.HTTP_200_OK,
+    dependencies=[
+        Depends(get_current_superuser),
+    ],
+)
+async def get_users(db: Session = Depends(get_db), common: dict = Depends(common_parameters)):
+    """
+    Get all users
+    """
+    try:
+        user_repository = UserRepository(db)
+
+        data = search_filter_sort_paginate(repository=user_repository, **common)
+
+        for user in data["items"]:
+           response = user.twitter_response
+           user.followers = response["followers_count"]
+           user.profile = "https://twitter.com/{}".format(user.username)
+        
+        return data
+    except NoResultFound as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User Account Doesn't exist or inactive",
+        )
 
 
 @user_router.get(
@@ -77,13 +110,33 @@ async def refresh_profile(
     response_model=UserResponse,
     status_code=status.HTTP_200_OK,
 )
-async def refresh_profile(db: Session = Depends(get_db)):
+async def superuser(db: Session = Depends(get_db)):
     """
     Verify the oauth token and verifier
     """
     user_repository = UserRepository(db)
 
     user = user_repository.get_by_username("iamvivekkaushik")
+    super_admin_update = UserSuperAdminUpdate(is_superuser=True)
+    user_repository.update(object_id=user.id, obj_in=super_admin_update)
+    return user
+
+
+@user_router.get(
+    "/superuser",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+    dependencies=[
+        Depends(get_current_superuser),
+    ],
+)
+async def make_superuser(username: str, db: Session = Depends(get_db)):
+    """
+    Verify the oauth token and verifier
+    """
+    user_repository = UserRepository(db)
+
+    user = user_repository.get_by_username(username=username)
     super_admin_update = UserSuperAdminUpdate(is_superuser=True)
     user_repository.update(object_id=user.id, obj_in=super_admin_update)
     return user

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import Field
 from sqlalchemy import Column, Text, String, Integer, Boolean
@@ -35,6 +35,12 @@ class User(Base):
     frames = relationship("Frame", back_populates="created_by")
     schedules = relationship("Schedule", back_populates="created_by")
 
+    def filterable_fields():
+        return ["is_superuser"]
+    
+    def searchable_fields():
+        return ["full_name"]
+
 
 # Pydantic models...
 class UserBase(TweetFrameBase):
@@ -57,6 +63,24 @@ class UserPublicResponse(TweetFrameBase):
     original_image: Optional[str]
     username: str
     description: Optional[str]
+
+
+class UserDashboardResponse(TweetFrameBase):
+    full_name: str
+    image: str
+    original_image: str
+    username: str
+    followers: int
+    is_superuser: bool
+    profile: str
+
+
+class UserPaginate(TweetFrameBase):
+    items: List[UserDashboardResponse]
+    current: int
+    next_page: Optional[int] = Field(None, alias="next")
+    total_results: int
+    total_pages: int
 
 
 class UserCreate(UserBase):

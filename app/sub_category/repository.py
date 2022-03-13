@@ -17,6 +17,11 @@ class SubCategoryRepository(BaseRepository):
         query = query.filter(self.model.category_id == category_id)
         return query.all()
 
+    def get_by_slug(self, category_slug: str) -> SubCategory:
+        query: Query = self.session.query(self.model)
+        query = query.filter(self.model.slug == category_slug)
+        return query.first()
+
     def update(
         self, *, object_id: int, obj_in: Union[SubCategoryUpdate, Dict[str, Any]]
     ) -> SubCategory:
