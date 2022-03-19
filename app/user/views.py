@@ -30,7 +30,9 @@ user_router = APIRouter()
         Depends(get_current_superuser),
     ],
 )
-async def get_users(db: Session = Depends(get_db), common: dict = Depends(common_parameters)):
+async def get_users(
+    db: Session = Depends(get_db), common: dict = Depends(common_parameters)
+):
     """
     Get all users
     """
@@ -40,10 +42,10 @@ async def get_users(db: Session = Depends(get_db), common: dict = Depends(common
         data = search_filter_sort_paginate(repository=user_repository, **common)
 
         for user in data["items"]:
-           response = user.twitter_response
-           user.followers = response["followers_count"]
-           user.profile = "https://twitter.com/{}".format(user.username)
-        
+            response = user.twitter_response
+            user.followers = response["followers_count"]
+            user.profile = "https://twitter.com/{}".format(user.username)
+
         return data
     except NoResultFound as e:
         raise HTTPException(

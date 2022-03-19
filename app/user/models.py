@@ -37,7 +37,7 @@ class User(Base):
 
     def filterable_fields():
         return ["is_superuser"]
-    
+
     def searchable_fields():
         return ["full_name"]
 

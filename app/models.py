@@ -14,7 +14,7 @@ class BaseIdMixin(object):
 
     def filterable_fields():
         return []
-    
+
     def searchable_fields():
         return []
 
