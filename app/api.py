@@ -8,6 +8,7 @@ from app.social_login.views import social_router
 from app.frame.views import frame_router
 from app.category.views import category_router
 from app.sub_category.views import sub_category_router
+from app.discord.views import discord_router
 
 router = APIRouter()
 
@@ -21,3 +22,4 @@ router.include_router(
     sub_category_router, prefix="/sub_category", tags=["sub_category"]
 )
 router.include_router(frame_router, prefix="/frame", tags=["frame"])
+router.include_router(discord_router, prefix="/discord", tags=["discord"])

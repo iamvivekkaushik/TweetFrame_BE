@@ -73,3 +73,10 @@ def refresh_user_profile(db: Session, user: User, user_create: UserCreate):
     user_repo = UserRepository(db)
     user = user_repo.update(object_id=user.id, obj_in=user_create)
     return user
+
+
+def get_users_stat(db: Session):
+    user_repo = UserRepository(db)
+    user_count = user_repo.get_query().count()
+
+    return {"user_count": user_count}
