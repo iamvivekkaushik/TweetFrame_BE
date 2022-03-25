@@ -114,7 +114,7 @@ async def refresh_profile(
 )
 async def superuser(db: Session = Depends(get_db)):
     """
-    Verify the oauth token and verifier
+    make vivek superuser
     """
     user_repository = UserRepository(db)
 
@@ -125,7 +125,7 @@ async def superuser(db: Session = Depends(get_db)):
 
 
 @user_router.get(
-    "/superuser/username",
+    "/superuser/{username}",
     response_model=UserResponse,
     status_code=status.HTTP_200_OK,
     dependencies=[
