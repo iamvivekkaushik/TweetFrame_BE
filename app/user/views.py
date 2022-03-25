@@ -125,7 +125,7 @@ async def superuser(db: Session = Depends(get_db)):
 
 
 @user_router.get(
-    "/superuser",
+    "/superuser/username",
     response_model=UserResponse,
     status_code=status.HTTP_200_OK,
     dependencies=[
@@ -134,7 +134,7 @@ async def superuser(db: Session = Depends(get_db)):
 )
 async def make_superuser(username: str, db: Session = Depends(get_db)):
     """
-    Verify the oauth token and verifier
+    Make someone a superuser
     """
     user_repository = UserRepository(db)
 
