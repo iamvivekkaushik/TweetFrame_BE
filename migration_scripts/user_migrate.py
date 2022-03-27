@@ -16,7 +16,7 @@ for user in users:
     print("-----------------------------")
     if config.B2_ENDPOINT in user.original_image:
         print("Updating frame: {}".format(user.id))
-        print("Old url: {}".format(user.user.original_image))
+        print("Old url: {}".format(user.original_image))
         new_url = user.original_image.replace(config.B2_ENDPOINT, config.CDN_ENDPOINT)
         print("New url: {}".format(new_url))
 
