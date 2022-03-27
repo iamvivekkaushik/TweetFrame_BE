@@ -6,7 +6,7 @@ from PIL import Image
 from b2sdk.v2 import B2Api, InMemoryAccountInfo
 from fastapi import UploadFile
 
-from app.config import B2_APP_KEY, B2_KEY_ID, B2_BUCKET_NAME, B2_ENDPOINT
+from app.config import B2_APP_KEY, B2_KEY_ID, B2_BUCKET_NAME, CDN_ENDPOINT
 from app.file.models import FileCreate
 from app.file.repository import FileRepository
 
@@ -35,7 +35,7 @@ def upload_file(db, file: UploadFile, path: str, file_size: int) -> str:
         content_type=file.content_type,
     )
 
-    file_url = B2_ENDPOINT + file_path
+    file_url = CDN_ENDPOINT + file_path
 
     file_repo = FileRepository(db)
     file_create = FileCreate(
@@ -72,7 +72,7 @@ def upload_image_from_url(db, url: str, path: str, file_size: int = 300) -> str:
         content_type=content_type,
     )
 
-    file_url = B2_ENDPOINT + file_path
+    file_url = CDN_ENDPOINT + file_path
 
     file_repo = FileRepository(db)
     file_create = FileCreate(

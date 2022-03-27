@@ -43,6 +43,7 @@ B2_BUCKET_NAME: str = config("B2_BUCKET_NAME")
 B2_KEY_ID: str = config("B2_KEY_ID")
 B2_APP_KEY: str = config("B2_APP_KEY")
 B2_ENDPOINT: str = config("B2_ENDPOINT")
+CDN_ENDPOINT: str = config("CDN_ENDPOINT")
 
 # Spaces
 S3_BUCKET_NAME: str = config("S3_BUCKET_NAME")
