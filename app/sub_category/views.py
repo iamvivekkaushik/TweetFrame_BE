@@ -24,7 +24,7 @@ sub_category_router = APIRouter()
     status_code=status.HTTP_200_OK,
 )
 async def get_sub_categories_by_cateogry(
-    category_id: Optional[int] = Query(None), db: Session = Depends(get_db)
+    category_id: Optional[int] = Query(None), category_slug: Optional[str] = Query(None), db: Session = Depends(get_db)
 ):
     """
     Get all sub categories.
@@ -33,6 +33,8 @@ async def get_sub_categories_by_cateogry(
         sub_category_repo = SubCategoryRepository(db)
         if category_id:
             sub_categories = sub_category_repo.get_by_category_id(category_id)
+        elif category_slug:
+            sub_categories = sub_category_repo.get_by_slug(category_slug)
         else:
             sub_categories = sub_category_repo.get_all()
 
