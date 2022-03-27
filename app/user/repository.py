@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import Query
 from sqlalchemy import true
 from sqlalchemy.orm import Session
@@ -14,6 +15,16 @@ from app.user.models import (
 class UserRepository(BaseRepository):
     def __init__(self, session: Session) -> None:
         super().__init__(session=session, model=User, model_base=UserBase)
+
+    def get_all_users(self) -> List[User]:
+        """
+        Get all users
+        """
+        query: Query = self.session.query(self.model).filter(
+            self.model.is_active == true()
+        )
+        return query.all()
+    
 
     def get_by_username(self, username) -> User:
         """
