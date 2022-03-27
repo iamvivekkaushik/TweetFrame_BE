@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import URLType
@@ -21,7 +22,7 @@ class Category(BaseIdMixin, Base):
 class CategoryBase(TweetFrameBase):
     name: str
     icon: str
-    slug: str
+    slug: Optional[str]
 
 
 class CategoryResponse(DateTimeModelMixin, CategoryBase, IDModelMixin):
@@ -29,7 +30,7 @@ class CategoryResponse(DateTimeModelMixin, CategoryBase, IDModelMixin):
 
 
 class CategoryCreate(CategoryBase):
-    pass
+    slug: str
 
 
 class FileCreateResponse(DateTimeModelMixin, CategoryCreate, IDModelMixin):

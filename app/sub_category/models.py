@@ -25,7 +25,7 @@ class SubCategory(BaseIdMixin, Base):
 class SubCategoryBase(TweetFrameBase):
     name: str
     icon: str
-    slug: str
+    slug: Optional[str]
 
 
 class SubCategoryResponse(DateTimeModelMixin, SubCategoryBase, IDModelMixin):
@@ -34,6 +34,7 @@ class SubCategoryResponse(DateTimeModelMixin, SubCategoryBase, IDModelMixin):
 
 class SubCategoryCreate(SubCategoryBase):
     category_id: int
+    slug: str
 
 
 class FileCreateResponse(DateTimeModelMixin, SubCategoryCreate, IDModelMixin):
