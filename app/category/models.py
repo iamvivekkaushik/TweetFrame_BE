@@ -11,7 +11,7 @@ from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelM
 class Category(BaseIdMixin, Base):
     name = Column(String(255), nullable=False)
     slug = Column(String(255), nullable=True)
-    icon = Column(URLType(), nullable=False)
+    icon = Column(URLType(), nullable=True)
 
     # Relationship
     frames = relationship("Frame", back_populates="category")
@@ -21,7 +21,6 @@ class Category(BaseIdMixin, Base):
 # Pydantic models...
 class CategoryBase(TweetFrameBase):
     name: str
-    icon: str
     slug: Optional[str]
 
 

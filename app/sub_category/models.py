@@ -12,7 +12,7 @@ from app.models import TweetFrameBase, BaseIdMixin, IDModelMixin, DateTimeModelM
 class SubCategory(BaseIdMixin, Base):
     name = Column(String(255), nullable=False)
     slug = Column(String(255), nullable=True)
-    icon = Column(URLType(), nullable=False)
+    icon = Column(URLType(), nullable=True)
 
     # Relationship
     frames = relationship("Frame", back_populates="sub_category")
@@ -24,7 +24,6 @@ class SubCategory(BaseIdMixin, Base):
 # Pydantic models...
 class SubCategoryBase(TweetFrameBase):
     name: str
-    icon: str
     slug: Optional[str]
 
 
@@ -43,7 +42,7 @@ class FileCreateResponse(DateTimeModelMixin, SubCategoryCreate, IDModelMixin):
 
 class SubCategoryUpdate(SubCategoryBase):
     name: Optional[str]
-    icon: Optional[str]
+    category_id: Optional[int]
 
 
 class CategoryUpdateResponse(DateTimeModelMixin, SubCategoryUpdate, IDModelMixin):

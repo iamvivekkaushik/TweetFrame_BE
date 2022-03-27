@@ -68,9 +68,6 @@ def exchange_access_token(
     body = response.content.decode()
     status_code = response.status_code
 
-    print("----------------------------------")
-    print(body)
-    print("----------------------------------")
     if status_code != 200:
         raise Exception(body, status_code)
 
