@@ -55,6 +55,7 @@ class UserBase(TweetFrameBase):
 
 class UserResponse(DateTimeModelMixin, UserBase, IDModelMixin):
     account_id: str
+    is_superuser: bool
 
 
 class UserPublicResponse(TweetFrameBase):
