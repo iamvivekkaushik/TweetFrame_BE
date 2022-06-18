@@ -24,7 +24,6 @@ class UserRepository(BaseRepository):
             self.model.is_active == true()
         )
         return query.all()
-    
 
     def get_by_username(self, username) -> User:
         """

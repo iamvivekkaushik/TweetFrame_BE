@@ -53,6 +53,27 @@ async def get_frames(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
+@frame_router.get(
+    "/popular",
+    response_model=List[FrameResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def get_frames(
+    db: Session = Depends(get_db),
+):
+    """
+    Get popular frames.
+    """
+    try:
+        frame_repo = FrameRepository(db)
+        frames = frame_repo.get_by_popularity()
+
+        print(frames)
+        return frames
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
 @frame_router.post(
     "", response_model=FrameResponse, status_code=status.HTTP_201_CREATED
 )

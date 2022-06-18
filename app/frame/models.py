@@ -48,6 +48,7 @@ class FrameBase(TweetFrameBase):
 
 
 class FrameResponse(DateTimeModelMixin, FrameBase, IDModelMixin):
+    type: Optional[str]
     category_id: Optional[int]
     sub_category_id: Optional[int]
     tags: Optional[List[TagBase]]
