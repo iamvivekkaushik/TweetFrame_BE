@@ -67,8 +67,6 @@ async def get_frames(
     try:
         frame_repo = FrameRepository(db)
         frames = frame_repo.get_by_popularity()
-
-        print(frames)
         return frames
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
