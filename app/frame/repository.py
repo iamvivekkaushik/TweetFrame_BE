@@ -30,7 +30,8 @@ class FrameRepository(BaseRepository):
         frame.created_at AS frame_created_at, 
         frame.updated_at AS frame_updated_at, 
         frame.settings AS frame_settings, 
-        frame.user_id AS frame_user_id 
+        frame.user_id AS frame_user_id,
+        frame.type AS frame_type 
         FROM frame 
         join (SELECT distinct frame_id, count(frame_id) from schedule GROUP BY frame_id) as SC on SC.frame_id = frame.id 
         WHERE is_active=true ORDER BY SC.count desc LIMIT {limit};"""
@@ -52,6 +53,7 @@ class FrameRepository(BaseRepository):
                 updated_at=item[9],
                 settings=item[10],
                 user_id=item[11],
+                type=item[12],
             )
             frame_list.append(frame)
         return frame_list
