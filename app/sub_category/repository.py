@@ -1,4 +1,5 @@
 from typing import Dict, Any, Union
+from sqlalchemy import true
 
 from fastapi import Query
 from sqlalchemy.orm import Session
@@ -13,7 +14,7 @@ class SubCategoryRepository(BaseRepository):
         super().__init__(session=session, model=SubCategory, model_base=SubCategoryBase)
 
     def get_by_category_id(self, category_id: int) -> list:
-        query: Query = self.session.query(self.model)
+        query: Query = self.session.query(self.model).filter(self.model.is_active == true())
         query = query.filter(self.model.category_id == category_id)
         return query.all()
 

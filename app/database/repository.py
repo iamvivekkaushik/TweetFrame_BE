@@ -1,4 +1,5 @@
 from typing import TypeVar, List, Dict, Any, Union
+from sqlalchemy import true
 
 from fastapi import Query
 from loguru import logger
@@ -34,7 +35,7 @@ class BaseRepository:
 
     def get_all(self, user: User = None, skip=0, limit=100) -> List[ModelType]:
         """Returns all the available objects for a user."""
-        query: Query = self.session.query(self.model)
+        query: Query = self.session.query(self.model).filter(self.model.is_active == true())
 
         if user:
             query = query.filter(self.model.user_id == user.id)
