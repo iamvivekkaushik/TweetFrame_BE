@@ -1,9 +1,11 @@
-<h2>TweetFrames (Backend)</h2>
+<h2>TweetFrames (Backend) DISCONTINUED </h2>
 
 <h4>Personalize your Twitter Profile with custom Frames.</h4>
 
 This Project is built using Python's [Fast API](https://fastapi.tiangolo.com/) Framework.
 
+
+⚠️ Due to recent twitter API changes, this project won't work.
 ___
 
 ## ⚙️ Installation
